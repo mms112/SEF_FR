@@ -92,22 +92,14 @@ System/Swat4X.ini
 *.tga
 *.xcf
 *.u
-System/Swat4X.ini
 System/User.ini
-System/swat4x.log
-System/UCC.log
-System/IGSoundEffectsSubsystem.u
 *.h
 *.bak
-Source/Game/SwatAIAwareness/Inc/SwatAIAwarenessClasses.h
-*.bak
-System/swat4x.log
-System/swat4x.log
 System/DynamicLoadout.ini
 System/Campaign.ini
-System/GuiBase.ini
 System/MissionResults.ini
-System/UCC.log
-System/Campaign.ini
-System/swat4x.log
-System/UCC.log
+Source.rar
+System/Logos/*.zip
+
+/* Don't ignore COntent/Classes */
+!Content/Classes/*.u
