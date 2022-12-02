@@ -98,6 +98,8 @@ System/User.ini
 System/DynamicLoadout.ini
 System/Campaign.ini
 System/MissionResults.ini
+System/Running.ini
+System/SwatGuiState.ini
 Source.rar
 System/Logos/*.zip
 
