@@ -1868,6 +1868,12 @@ simulated function AdjustPlayerMovementSpeed(float dTime) {
 		if ( TSnow !=  TSdiff )  //do it only once per second
 		{*/
 		WeightMovMod = LoadOut.GetWeightMovementModifier();
+		
+		if(IsLowReady())
+		{
+			WeightMovMod += 0.3;
+		}
+		
 		AnimSet.AnimSpeedForward = ModdedFwd * WeightMovMod;
 		AnimSet.AnimSpeedBackward = ModdedBck * WeightMovMod;
 		AnimSet.AnimSpeedSidestep = ModdedSde * WeightMovMod;
@@ -1876,7 +1882,6 @@ simulated function AdjustPlayerMovementSpeed(float dTime) {
 		
 		
 	//}
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2254,7 +2259,7 @@ simulated state Throwing
         OnTick();
 		
 		if(Level.NetMode == NM_StandAlone) //speed modifier for SP only (cause it creates more bugs than features)
-			if (PlayerController(Controller).bRun != 1 && !isLowReady()) 
+			//if (PlayerController(Controller).bRun != 1 && !isLowReady()) 
 				AdjustPlayerMovementSpeed(dtime);
 
         if (!DoneThrowing)
@@ -2467,7 +2472,7 @@ simulated function Tick(float dTime) {
     leanr(dTime);
 
 	if(Level.NetMode == NM_StandAlone) //speed modifier for SP only (cause it creates more bugs than features)
-			if (PlayerController(Controller).bRun != 1 && !isLowReady()) 
+			//if (PlayerController(Controller).bRun != 1 && !isLowReady()) 
 				AdjustPlayerMovementSpeed(dtime);
 	
     OnTick();

@@ -6405,16 +6405,7 @@ function HandleWalking()
     {
 		ActiveItem = Pawn.GetActiveItem();
         //WantsToWalk = bool(bRun) == Repo.GuiConfig.bAlwaysRun; // MCJ: old version.
-        
-		if (GC.ExtraIntOptions[6] == 1) //with manual low ready you can run and aim to keep the flow
-		{
-			WantsToWalk = bool(bRun) == bAlwaysRun;
-		}
-		else
-		{
-			WantsToWalk = (WantsZoom && ActiveItem.ShouldWalkInIronsights()) || bool(bRun) == bAlwaysRun;
-		}
-		
+        WantsToWalk = (WantsZoom && ActiveItem.ShouldWalkInIronsights()) || bool(bRun) == bAlwaysRun;
 		Pawn.SetWalking( WantsToWalk && !Region.Zone.IsA('WarpZoneInfo') );
 
         if (aForward == 0 && aStrafe == 0)
