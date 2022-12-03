@@ -1193,7 +1193,7 @@ private function bool ShouldEncounterEnemy(Pawn Enemy)
 
 	// returns true if the Enemy is concious, and we're not dealing with someone else,
 	// or if the new enemy is close enough that we should take another enemy
-	return (class'Pawn'.static.checkConscious(Enemy) && !m_Pawn.IsCompliant() && !m_Pawn.IsArrested() &&
+	return (class'Pawn'.static.checkConscious(Enemy) && !m_Pawn.IsCompliant() && !m_Pawn.IsArrested() && (CurrentPickUpWeaponGoal == None) &&
 			((CurrentEnemy == None) ||
 			 ((CurrentInitialReactionGoal == None) && (CurrentEngageOfficerGoal == None)) ||
 			 ShouldEncounterNewEnemy(Enemy)));
@@ -1477,7 +1477,7 @@ function NotifyDoorWedged(Door WedgedDoor)
 	SD=ISwatDoor(WedgedDoor);
 
 	//let the enemy remove wedges if they are high skill
-    if( ISwatEnemy(m_Pawn).GetEnemySkill() == EnemySkill_High  && ( FRand() > 0.5 ) ) //  EnemySkill_High with 50% chance       
+    if( ISwatEnemy(m_Pawn).GetEnemySkill() == EnemySkill_High  && ( FRand() > 0.65 ) ) //  EnemySkill_High with 35% chance       
     {    
 	   
 		for (C = Level.ControllerList; C != none && !DoRemoveWedge ; C = C.nextController)
@@ -1696,9 +1696,20 @@ latent function DecideToStayCompliant()
 		return;
 	}
 
-	while (class'Pawn'.static.checkConscious(m_Pawn) &&
-			(GetCurrentMorale() < class'EnemyCommanderActionConfig'.default.LeaveCompliantStateMoraleThreshold || FoundWeaponModel == None))
+	while (class'Pawn'.static.checkConscious(m_Pawn))
 	{
+		if(FoundWeaponModel != None)
+		{
+			if(GetCurrentMorale() >= class'EnemyCommanderActionConfig'.default.LeaveCompliantStateMoraleThreshold)
+			{
+				break;
+			}
+		}
+		else if(GetCurrentMorale() >= class'EnemyCommanderActionConfig'.default.LeaveCompliantStateMoraleThreshold)
+		{
+			break;
+		}
+		
 		// Sleep for a random amount of time for this "tick"
 		// This might seem high, but keep in mind that half the values are going to be below this and the effect can stack.
 		Sleep(FRand() * 2.0);
@@ -1742,15 +1753,27 @@ latent function DecideToStayCompliant()
 			if (CurrentPickUpWeaponGoal != None)
 				WaitForGoal(CurrentPickUpWeaponGoal);
 			//ISwatEnemy(m_Pawn).GetCommanderAction().CreateBarricadeGoal(???, false, false);
+			CurrentPickUpWeaponGoal = None;
 		}
+	}
+	else
+	{
+		// AI stopped being compliant
+		ISwatAI(m_Pawn).SetIsCompliant(false);
+		RemoveComplianceGoal();
+		ISwatAICharacter(m_Pawn).SetCanBeArrested(false);
+
+		// Reset AI (stop animating)
+		m_pawn.ShouldCrouch(false);
+		m_Pawn.ChangeAnimation();				// will swap in anim set
+		ISwatAI(m_Pawn).SetIdleCategory('');	// remove compliance idles
+		bHasFledWithoutUsableWeapon = false;
 	}
 }
 
 latent function AmbushCompliant()
 {
 	//we ambush officers!
-	log("DecideToStayCompliant: AmbushCompliant() with morale:");
-		
 	// Sleep for a random amount of time for this "tick"
 	Sleep(frand() * 20.0);
 	
@@ -1761,6 +1784,15 @@ latent function AmbushCompliant()
 	}
 	
 	// AI stopped being compliant
+	
+	if(GetCurrentMorale() < 0.0)
+	{
+		ChangeMorale(-GetCurrentMorale(), "Unobserved Compliance" );
+	}
+	
+	ChangeMorale(GetUnobservedComplianceMoraleModification(), "Unobserved Compliance");
+	
+	log("DecideToStayCompliant: AmbushCompliant() with morale:" @ GetCurrentMorale());
 	ISwatAI(m_Pawn).SetIsCompliant(false);
 	RemoveComplianceGoal();
 	ISwatAICharacter(m_Pawn).SetCanBeArrested(false);
@@ -1769,15 +1801,6 @@ latent function AmbushCompliant()
 	m_pawn.ShouldCrouch(false);
 	m_Pawn.ChangeAnimation();				// will swap in anim set
 	ISwatAI(m_Pawn).SetIdleCategory('');	// remove compliance idles
-	
-	
-	//a threat before the animation
-	if ((m_Pawn.IsA('SwatEnemy')) && ((!m_Pawn.IsA('SwatUndercover')) || (!m_Pawn.IsA('SwatGuard'))) && !ISwatEnemy(m_Pawn).IsAThreat())
-	{
-		ISwatEnemy(m_Pawn).BecomeAThreat();
-		yield();
-	}	
-		
 	
 	//equip
 	ISwatEnemy(m_Pawn).GetBackupWeapon().LatentWaitForIdleAndEquip();

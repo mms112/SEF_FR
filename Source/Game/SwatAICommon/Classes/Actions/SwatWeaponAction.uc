@@ -184,75 +184,34 @@ final function UpdateThreatToTarget(Actor Target)
 final latent function LatentAimAtActor(Actor Target, optional float MaxWaitTime)
 {
     // only aim at if if we can
-	//local float CurrentTime;
+	local float CurrentTime;
 	local float StartTime;
-	local float fdot;
-	local vector TargetDirection , ViewDirectionNoZ;
 
 	StartTime = Level.TimeSeconds;
 
     if (ISwatAI(m_Pawn).AnimCanAimAtDesiredActor(Target) && HasWeaponEquipped())
     {
-		// added here so server can spread information on suspect intentions before even aiming.
-		if( m_pawn.isa('SwatEnemy') )
-		{
-			UpdateThreatToTarget(Target);
-			yield();
-		}
-		//////////////////////////////
-		
-        //ISwatAI(m_pawn).AimAtActor(Target);
-		if ( ( target.isa('SwatPawn') || target.isa('SwatPlayer') ) && !FiredWeapon(m_pawn.GetActiveItem()).isa('Pepperspray') )
-		{
-			
-			ISwatAI(m_pawn).AimAtpoint(Target.GetBoneCoords('Bip01_Spine2').Origin);
-			
-			//add time to avoid quickscope shooting
-			TargetDirection = Normal( m_pawn.location - target.location);
-			ViewDirectionNoZ = vector(m_pawn.Rotation);
-			fDot =  ViewDirectionNoZ Dot TargetDirection;
-			//log (m_pawn.name $ " attacking " $ target.name $ " fdot is: " $ fdot );
-			
-			if ( fdot > 0.5 )
-			{
-				//log ( m_pawn.name $ " quick scope added time on target 0.8" );
-				MaxWaitTime = MaxWaitTime + 1.0;
-			}
-			else if ( fdot > 0.0 && fdot < 0.5 &&  m_pawn.isa('SwatEnemy') )
-			{
-				//log ( m_pawn.name $ " quick scope added time on target 0.4" );
-				MaxWaitTime = MaxWaitTime + 0.6;
-			}
-			else if ( fdot > -0.5 && fdot <= 0.0 &&  m_pawn.isa('SwatEnemy') )
-			{
-				//log ( m_pawn.name $ " quick scope added time on target 0.2" );
-				MaxWaitTime = MaxWaitTime + 0.4;
-			}
-			 
-		}
-	    else
-			ISwatAI(m_pawn).AimAtActor(Target);
-		
-		
-		
-		
+        ISwatAI(m_pawn).AimAtActor(Target);
+
         // wait until we aim at what we want to
-        while ( ((!ISwatAI(m_pawn).AnimIsAimedAtDesired() && HasWeaponEquipped()) || ISwatAI(m_Pawn).AnimAreAimingChannelsMuted()) && Level.TimeSeconds - StartTime < MaxWaitTime )
+        while ((!ISwatAI(m_pawn).AnimIsAimedAtDesired() && HasWeaponEquipped()) || 
+			    ISwatAI(m_Pawn).AnimAreAimingChannelsMuted())
         {
 //			log("aiming at actor update - AnimIsAimedAtDesired: " $ ISwatAI(m_pawn).AnimIsAimedAtDesired() $ " HasWeaponEquipped: " $ HasWeaponEquipped() $ " AnimAreAimingChannelsMuted: " $ ISwatAI(m_Pawn).AnimAreAimingChannelsMuted());
 			// See if we have waited past the threshold
-			/*if(MaxWaitTime > 0.0)
+			if(MaxWaitTime > 0.0)
 			{
 				currentTime = Level.TimeSeconds;
-				if(Level.TimeSeconds - StartTime > MaxWaitTime ) //&& !ISwatAI(m_Pawn).AnimAreAimingChannelsMuted())
+				if(CurrentTime - StartTime > MaxWaitTime && !ISwatAI(m_Pawn).AnimAreAimingChannelsMuted())
 				{
 					break;	// die
 				}
-			}*/
+			}
 			UpdateThreatToTarget(Target);
             yield();
         }
-		//UpdateThreatToTarget(Target);
+
+		UpdateThreatToTarget(Target);
     }
 }
 
