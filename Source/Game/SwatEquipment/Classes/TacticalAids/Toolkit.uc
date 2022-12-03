@@ -47,7 +47,7 @@ simulated function bool ShouldUseAlternate()
 
 simulated function float GetQualifyDuration()
 {
-    return (IAmUsedByToolkit(Other).GetQualifyTimeForToolkit()) ;  //(IAmUsedByToolkit(Other).GetQualifyTimeForToolkit() * GetQualifyModifier())
+    return IAmUsedByToolkit(Other).GetQualifyTimeForToolkit() * GetQualifyModifier();
 }
 
 simulated function bool CanUseOnOtherNow(Actor other) {
@@ -79,5 +79,5 @@ defaultproperties
 {
     Slot=SLOT_Toolkit
 
-    EquipOtherAfterUsed=false
+    EquipOtherAfterUsed=true
 }
