@@ -61,7 +61,7 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
 	if ( ISwatEnemy(Pawn).GetCurrentState() == EnemyState_Flee  )
     {    
 		//GetGame().PenaltyTriggeredMessage(Pawn(Killer) , "Enemy flee " $!ISwatEnemy(Pawn).GetEnemyCommanderAction().HasFledWithoutUsableWeapon()$  " " );
-		if ( VSize(Pawn.Location - Killer.Location) < 1000 && !ISwatEnemy(Pawn).GetEnemyCommanderAction().HasFledWithoutUsableWeapon() ) 
+		if ( VSize(Pawn.Location - Killer.Location) < 150 && !ISwatEnemy(Pawn).GetEnemyCommanderAction().HasFledWithoutUsableWeapon() ) 
 		{
 			//GetGame().PenaltyTriggeredMessage(Pawn(Killer) , "Enemy flee: no penalty");
 			return; 
