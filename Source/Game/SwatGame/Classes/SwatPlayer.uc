@@ -2170,12 +2170,9 @@ simulated state ThrowingPrep
     simulated function Tick(float dTime)
     {
         Global.Tick(dTime);
-		
-		if(Level.NetMode == NM_StandAlone) //speed modifier for SP only (cause it creates more bugs than features)
-			if (PlayerController(Controller).bRun != 1 && !isLowReady()) 
-				AdjustPlayerMovementSpeed(dtime);
-        
-		OnTick();
+
+        AdjustPlayerMovementSpeed(dtime);
+        OnTick();
 
         if (!DoneThrowing)
         {
@@ -2257,10 +2254,8 @@ simulated state Throwing
     {
         Global.Tick(dTime);
         OnTick();
-		
-		if(Level.NetMode == NM_StandAlone) //speed modifier for SP only (cause it creates more bugs than features)
-			//if (PlayerController(Controller).bRun != 1 && !isLowReady()) 
-				AdjustPlayerMovementSpeed(dtime);
+
+        AdjustPlayerMovementSpeed(dtime);
 
         if (!DoneThrowing)
         {
@@ -2470,11 +2465,7 @@ Begin:
 
 simulated function Tick(float dTime) {
     leanr(dTime);
-
-	if(Level.NetMode == NM_StandAlone) //speed modifier for SP only (cause it creates more bugs than features)
-			//if (PlayerController(Controller).bRun != 1 && !isLowReady()) 
-				AdjustPlayerMovementSpeed(dtime);
-	
+    AdjustPlayerMovementSpeed(dtime);
     OnTick();
 }
 

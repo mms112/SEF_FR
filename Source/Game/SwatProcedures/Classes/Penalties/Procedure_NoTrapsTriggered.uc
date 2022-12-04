@@ -15,11 +15,9 @@ function PostInitHook()
 
 function OnBoobyTrapTriggered(SwatGame.BoobyTrap Pawn, Actor Triggerer)
 {
-	//no more penalties for triggering traps
-	//NumTrapsTriggered++;
-	
-	//TriggerPenaltyMessage(Pawn(Triggerer));  
-	//GetGame().CampaignStats_TrackPenaltyIssued();
+  NumTrapsTriggered++;
+  TriggerPenaltyMessage(Pawn(Triggerer));
+  GetGame().CampaignStats_TrackPenaltyIssued();
 
   if (GetGame().DebugLeadership)
       log("[LEADERSHIP] "$class.name
@@ -38,9 +36,7 @@ function int GetCurrentValue()
   if (GetGame().DebugLeadershipStatus)
     log("[LEADERSHIP] "$class.name
       $" is returning with NumTrapsTriggered = "$ string(NumTrapsTriggered));
-  //no more penalties for triggering traps
-  //return PenaltyPerTrap * NumTrapsTriggered;
-  return 0;
+  return PenaltyPerTrap * NumTrapsTriggered;
 }
 
 /*defaultproperties
