@@ -1239,15 +1239,15 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
         $" * "$ExternalDamageModifier
         $" = "$Damage);
 
-    IHaveSkeletalRegions(Victim).OnSkeletalRegionHit(HitRegion, HitLocation, HitNormal, Damage, GetDamageType(), Owner);
-
-    DealDamage(Victim, Damage, Pawn(Owner), HitLocation, MomentumVector, GetDamageType());
-
-    //the bullet has lost momentum to its target
+	//the bullet has lost momentum to its target
     Momentum -= Protection.GetMtP();
 
     if(Ammo.CanShredArmor()) {
       Protection.OnProtectedRegionHit();
+	  
+    IHaveSkeletalRegions(Victim).OnSkeletalRegionHit(HitRegion, HitLocation, HitNormal, Damage, GetDamageType(), Owner);
+
+    DealDamage(Victim, Damage, Pawn(Owner), HitLocation, MomentumVector, GetDamageType());
     }
 
     return PenetratesProtection;
@@ -2458,8 +2458,7 @@ simulated private function InitFlashlight()
 	{
 		FlashlightDynamicLight = Spawn(FlashlightSpotLightClass,WeaponModel,,,);
 		//FlashlightDynamicLight.bActorShadows = true; //doesn't seem to work
-		//FlashlightDynamicLight.LightCone = 8; ORIGINAL SEF VALUE 
-		FlashlightDynamicLight.LightCone = 4; //how wide the flashlight beam is
+		FlashlightDynamicLight.LightCone = 8; //how wide the flashlight beam is
 		FlashlightDynamicLight.LightRadius = FlashlightFirstPersonDistance; //distance the beam travels
 	}
 	else

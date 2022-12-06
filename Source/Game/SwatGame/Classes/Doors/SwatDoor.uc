@@ -1165,7 +1165,7 @@ function Blasted(Pawn Instigator)
 		
 	switch (GetDoorModel().GetCurrentMaterial(0).MaterialVisualType )
     { 
-		case MVT_ThinMetal:
+		/*case MVT_ThinMetal:
 	    case MVT_ThickMetal:
 	    case MVT_Default:	
 			
@@ -1174,7 +1174,7 @@ function Blasted(Pawn Instigator)
 		
 		case MVT_wood:	
 		if ( chance < 0.1 )
-		   break;
+		   break; */
 		     
 		default:
 		if ( IsClosed() || IsClosing() )

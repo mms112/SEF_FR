@@ -121,8 +121,13 @@ function OnGivenToOwner() {
 simulated function float GetMtP() {
   if(!MayBeShredded) {
     return MomentumToPenetrate;
-  } else {
+  } else if (CurrentMomentumToPenetrate > MinMomentumToPenetrate)
+  {
     return CurrentMomentumToPenetrate;
+  }
+  else
+  {
+	return MinMomentumToPenetrate;
   }
 }
 
@@ -137,12 +142,41 @@ simulated function OnProtectedRegionHit() {
 	    CurrentBulletMtP = MinBulletMtpReduction;
   }
   
-  if(CurrentMomentumToPenetrate < MaxMomentumToPenetrate/2) {
-    ProtectionType -= 3;
+	if(CurrentMomentumToPenetrate < MaxMomentumToPenetrate/2) {
+		switch (ArmorProtection)
+		{
+		case Level_0:
+			ArmorProtection = Level_0;
+			break;
+		case Level_1:
+			ArmorProtection = Level_0;
+			break;
+		case Level_2a:
+			ArmorProtection = Level_0;
+			break;
+		case Level_2:
+			ArmorProtection = Level_0;
+			break;
+		case Level_3a:
+			ArmorProtection = Level_1;
+			break;
+		case Level_3:
+			ArmorProtection = Level_2a;
+			break;
+		case Level_3X:
+			ArmorProtection = Level_2;
+			break;		
+		case Level_4:
+			ArmorProtection = Level_3a;
+			break;
+		default:
+			ArmorProtection = Level_0;
+			break;
+		}
 	}
 
-	if(CurrentMomentumToPenetrate < MinMomentumToPenetrate) {
-	    CurrentMomentumToPenetrate = MinMomentumToPenetrate;
+	if(CurrentMomentumToPenetrate < 0.0) {
+	    CurrentMomentumToPenetrate = 0.0;
 	}
 	log("[SHREDDING] Armor "$self$" now has "$CurrentMomentumToPenetrate$" MtP");
 
@@ -177,7 +211,12 @@ function bool IsArmorShreddable() {
 }
 
 simulated function float GetArmorHealthPercent() {
-  return (CurrentMomentumToPenetrate - MinMomentumToPenetrate) / (MaxMomentumToPenetrate - MinMomentumToPenetrate);
+	if (ArmorProtection == Level_0)
+	{
+		return 0.0;
+	}
+	
+	return (CurrentMomentumToPenetrate) / MaxMomentumToPenetrate;
 }
 
 static function bool IsUsableByPlayer()

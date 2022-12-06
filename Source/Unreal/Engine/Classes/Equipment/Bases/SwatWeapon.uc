@@ -74,7 +74,6 @@ enum WeaponLowReadyAnimationType
 /*
  * Determines what animations the AI-controlled officers should use when idling
  */
-
 enum EIdleWeaponStatus
 {
 	IdleWeaponDoesNotMatter,
@@ -96,7 +95,6 @@ enum EIdleWeaponStatus
 /*
  * Determines what animations the AI-controlled officers should use when ordering compliance
  */
-
 enum EComplianceWeaponAnimation
 {
   Compliance_Machinegun,
@@ -107,7 +105,31 @@ enum EComplianceWeaponAnimation
   Compliance_Shield
 };
 
+/*
+ *  Starting in v7.1, weapons can have "variants".
+ *  Variants essentially remap the weapon class that is supplied to the loadout while appearing to come from a "base" type.
+ */
+struct WeaponVariant
+{
+  var localized string VariantName;
+  var class<SwatWeapon> VariantClass;
+};
+
 var() localized config string ShortName;
+
+var() localized config string NoVariantName; // The name to use when no variant is selected
+var() config array<WeaponVariant> SelectableVariants;
+var() config bool bIsVariant;   // True if this class is a variant of another weapon (if so, don't show it in the menu)
+var() config class<SwatWeapon> OriginalVariant; // The weapon that this is a variant of
+
+// These fields below are designed to eliminate a lot of the headaches when implementing weapons who only have a difference in sights.
+// If we didn't have them, we would have to add new entries in SoundEffects.ini for all of the new weapons.
+var() config bool bAlterFirstPersonMesh; // If true, the mesh on the first person model will be altered.
+var() config Mesh FirstPersonMesh; // Note, if this is None, the static mesh will be used instead
+var() config StaticMesh FirstPersonStaticMesh;
+var() config bool bAlterThirdPersonMesh;
+var() config Mesh ThirdPersonMesh;
+var() config StaticMesh ThirdPersonStaticMesh;
 
 var(Firing) config int MagazineSize;
 var(Firing) protected config float Choke "Mostly used for shotguns - specifies how spread apart bullets should be - applied after AimError";
@@ -1299,16 +1321,18 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
         $" * "$DamageModifier
         $" * "$ExternalDamageModifier
         $" = "$Damage);
+		
+	//the bullet has lost momentum to its target
+    Momentum -= Protection.GetMtP();
+		
+	if(Ammo.CanShredArmor()) {
+      Protection.OnProtectedRegionHit();
 
     IHaveSkeletalRegions(Victim).OnSkeletalRegionHit(HitRegion, HitLocation, HitNormal, Damage, GetDamageType(), Owner);
 
     DealDamage(Victim, Damage, Pawn(Owner), HitLocation, MomentumVector, GetDamageType());
 
-    //the bullet has lost momentum to its target
-    Momentum -= Protection.GetMtP();
-
-    if(Ammo.CanShredArmor()) {
-      Protection.OnProtectedRegionHit();
+    
     }
 
     return PenetratesProtection;

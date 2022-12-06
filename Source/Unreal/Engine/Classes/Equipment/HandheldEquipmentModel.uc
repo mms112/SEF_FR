@@ -231,7 +231,7 @@ simulated function PlayEquip()
 	}
 	else if(Owner.IsA('IAmAffectedByWeight'))
 	{	// apply the bulk reload speed modifier
-		EquipRate *= IAmAffectedByWeight(HandsOwner).GetBulkSpeedModifier();
+		EquipRate *= IAmAffectedByWeight(Owner).GetBulkSpeedModifier();
 	}
 	else
 	{
@@ -332,7 +332,7 @@ simulated function PlayUnequip()
 	}
 	else if(Owner.IsA('IAmAffectedByWeight'))
 	{	// apply the bulk reload speed modifier
-		UnequipRate *= IAmAffectedByWeight(HandsOwner).GetBulkSpeedModifier();
+		UnequipRate *= IAmAffectedByWeight(Owner).GetBulkSpeedModifier();
 	}
 	else
 	{
