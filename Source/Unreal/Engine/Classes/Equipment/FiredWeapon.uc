@@ -1198,7 +1198,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 
     //the bullet will penetrate the protection unles it loses all of its momentum to the protection
     //PenetratesProtection = (Protection.GetMtP() < Momentum);
-	PenetratesProtection = (BulletLevel >= ArmorLevel);
+	PenetratesProtection = (BulletLevel >= ArmorLevel) || (Protection.GetMtP() < Momentum);
 
     //determine DamageModifierRange
     if (PenetratesProtection)
@@ -1250,7 +1250,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     DealDamage(Victim, Damage, Pawn(Owner), HitLocation, MomentumVector, GetDamageType());
     }
 
-    return PenetratesProtection;
+    return PenetratesProtection && (Momentum > 0.0);
 }
 
 function class<DamageType> GetDamageType()

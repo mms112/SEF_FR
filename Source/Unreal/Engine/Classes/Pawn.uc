@@ -908,10 +908,13 @@ simulated function vector CalcDrawOffset()
         if( bWeaponBob && GetActiveItem() != None)
 		{
 			//DrawOffset += WeaponBob(0); //TMC 11-11-2003 += WeaponBob(GetActiveItem().GetFirstPersonModel().BobDamping);
+			DrawOffset+= WeaponBob(0.80);
+			/*
 			if ( Controller.bRun == 1 )
 				DrawOffset+= WeaponBob(0.80);
 		    else
 				DrawOffset+= WeaponBob(0.96);
+			*/
 		}
 	}
 	return DrawOffset;
