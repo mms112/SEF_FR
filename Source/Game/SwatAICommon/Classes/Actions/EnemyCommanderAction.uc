@@ -679,6 +679,12 @@ function OnPawnEncounteredVisionNotification()
 		log(m_Pawn.Name $ " OnPawnEncounteredVisionNotification - VisionSensor.LastPawnSeen: " $ VisionSensor.LastPawnSeen $ " LostPawnTimer: " $ LostPawnTimer $ " CurrentEnemy: " $CurrentEnemy);
 
 	EncounterEnemy(Enemy);
+	
+	/* This ensures that the action is run, which will make suspects leave compliance state */
+	if (m_Pawn.IsCompliant() && !m_Pawn.IsArrested() && isIdle())
+	{
+		runAction();
+	}
 }
 
 function OnPawnLostVisionNotification()
@@ -1333,6 +1339,8 @@ latent function EngageCurrentEnemy()
 	if ( m_pawn.IsArrested() || IswatPawn(m_pawn).IsBeingArrestedNow() || !class'Pawn'.static.checkConscious(m_Pawn) || m_pawn.IsCompliant() )
 	{
 		//abort
+		SetCurrentEnemy(None);
+		bIgnoreCurrentEnemy = false;
 		return;
 	}
 	
@@ -1657,6 +1665,12 @@ latent function FinishedEngagingEnemies()
 
 	while (!resource.requiredResourcesAvailable(class'BarricadeGoal'.static.GetDefaultPriority(), class'BarricadeGoal'.static.GetDefaultPriority()))
 	{
+		if (m_Pawn.isCompliant())
+		{
+			//abort
+			return;
+		}
+		
 		yield();
 	}
 
@@ -1687,29 +1701,22 @@ latent function DecideToStayCompliant()
 	}
 
 	while (class'Pawn'.static.checkConscious(m_Pawn))
-	{
-		if(FoundWeaponModel != None)
-		{
-			if(GetCurrentMorale() >= class'EnemyCommanderActionConfig'.default.LeaveCompliantStateMoraleThreshold)
-			{
-				break;
-			}
-		}
-		else if(GetCurrentMorale() >= class'EnemyCommanderActionConfig'.default.LeaveCompliantStateMoraleThreshold)
-		{
-			break;
-		}
-		
+	{	
 		// Sleep for a random amount of time for this "tick"
 		// This might seem high, but keep in mind that half the values are going to be below this and the effect can stack.
 		Sleep(FRand() * 2.0);
 
 		// Increase moral when not being guarded (unobserved)
 		if (ISwatAI(m_Pawn).IsUnobservedByOfficers())
+		{
+			if (GetCurrentMorale() >= class'EnemyCommanderActionConfig'.default.LeaveCompliantStateMoraleThreshold)
+			{
+				FoundWeaponModel = ISwatEnemy(m_Pawn).FindNearbyWeaponModel();
+				break;
+			}
+			
 			ChangeMorale( GetUnobservedComplianceMoraleModification(), "Unobserved Compliance" );
-		
-		if (GetCurrentMorale() >= class'EnemyCommanderActionConfig'.default.LeaveCompliantStateMoraleThreshold)
-			FoundWeaponModel = ISwatEnemy(m_Pawn).FindNearbyWeaponModel();
+		}
 
 		if (m_pawn.logTyrion)
 			log(name @ "DecideToStayCompliant: morale now:" @ GetCurrentMorale());
@@ -1775,7 +1782,7 @@ latent function AmbushCompliant()
 	// Sleep for a random amount of time for this "tick"
 	Sleep(frand() * 20.0);
 	
-	if ( m_pawn.IsArrested() || IswatPawn(m_pawn).IsBeingArrestedNow() || !class'Pawn'.static.checkConscious(m_Pawn) )
+	if ( m_pawn.IsArrested() || IswatPawn(m_pawn).IsBeingArrestedNow() || !class'Pawn'.static.checkConscious(m_Pawn) || (ISwatEnemy(m_Pawn).GetBackupWeapon() == None) )
 	{
 		//abort
 		return;
@@ -1835,7 +1842,7 @@ state Running
 		log(Name $ " paused at time " $ Level.TimeSeconds);
 
 	// wait until something happens
-	if (m_Pawn.IsCompliant())
+	if (m_Pawn.IsCompliant() && !m_Pawn.IsArrested())
 	{
 		
 		if (CurrentAttackTargetGoal != None)
