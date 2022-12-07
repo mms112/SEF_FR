@@ -6587,7 +6587,7 @@ exec function LeanLeftN(bool bPressed)
 			if (SwatPlayer(Pawn).LWS == Lean_Left)
 				SwatPlayer(Pawn).LeanWalk("left");
 			return;
-		}e
+		}
 		else
 		{
 			SwatPlayer(Pawn).LeanWalk("left");
