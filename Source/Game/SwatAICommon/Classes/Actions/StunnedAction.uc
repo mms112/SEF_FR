@@ -84,11 +84,12 @@ function initAction(AI_Resource r, AI_Goal goal)
 	if (m_Pawn.IsA('SwatEnemy'))
 	{
 		SwatAIRepository(m_Pawn.Level.AIRepo).GetHive().NotifyEnemyStunned(m_Pawn);
-	}
-	if (m_Pawn.IsA('SwatEnemy') && ISwatEnemy(m_Pawn).IsAThreat())
-	{
 		ISwatEnemy(m_Pawn).UnbecomeAThreat(true, ThreatCooldown);
 	}
+	/*if (m_Pawn.IsA('SwatEnemy') && ISwatEnemy(m_Pawn).IsAThreat())
+	{
+		ISwatEnemy(m_Pawn).UnbecomeAThreat(true, ThreatCooldown);
+	}*/
 	// if we're running on an hostage, let the hive know -J21C
 	if (m_Pawn.IsA('SwatHostage'))
 	{

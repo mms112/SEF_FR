@@ -24,7 +24,7 @@ protected function float GetMoraleModificationAmount()
 function bool ShouldAffectMoraleAgain()
 {
 	// the flashbang behavior does affect morale again
-	return true;
+	return false;
 }
 
 protected function AddAdditionalStunnedTime(float AdditionalStunnedTime)
