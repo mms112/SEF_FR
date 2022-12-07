@@ -245,18 +245,12 @@ function bool ShouldAttackWhileFleeing()
 	    return false; // Sanity check - anything below this point might have unintended consequences
 	}
 
-	//dont bother to attack if officers cant catch me
-	if ( !IsWithinDistanceOfOfficers() )
-	{
-		return false;
-	}
-
     CurrentEnemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
 	if(CurrentEnemy == None)
 	{
 		return false;
 	}
- 
+
 	if(CurrentEnemy.IsA('SniperPawn'))
 	{
 	    return false; // We should not be able to target SniperPawns
@@ -437,10 +431,9 @@ state Running
 Begin:
 	waitForResourcesAvailable(achievingGoal.priority, achievingGoal.priority);
 
-    if (ShouldAttackWhileFleeing() )
+    if (ShouldAttackWhileFleeing())
 	{
-		if ( CurrentMoveToActorGoal == None ) //dont attack if fleeing as already started 
-			AttackWhileFleeing();
+		AttackWhileFleeing();
 	}
 	else
 	{
@@ -448,8 +441,7 @@ Begin:
 		SwapInFullBodyFleeAnimations();
 	}
 
-	if ( CurrentAttackTargetGoal == None) //dont flee if we are attaccking
-		Flee();
+    Flee();
 
 	// let the commander know to clean up after this particular behavior
 	ISwatEnemy(m_Pawn).GetEnemyCommanderAction().FinishedMovingEngageBehavior();
@@ -463,5 +455,5 @@ Begin:
 defaultproperties
 {
     satisfiesGoal = class'EngageOfficerGoal'
-	ThreatCooldown = 2.0
+	ThreatCooldown = 1.0
 }

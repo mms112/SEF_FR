@@ -1041,6 +1041,7 @@ protected function NotifyBecameCompliant()
 	Super.NotifyBecameCompliant();
 
 	SetCurrentEnemy(None);
+	bIgnoreCurrentEnemy = false;
 
 	// remove the initial reaction goal engage officer goals right away
 	if (CurrentInitialReactionGoal != None)
@@ -1329,7 +1330,7 @@ latent function ReactInitiallyToEnemy()
 latent function EngageCurrentEnemy()
 {
 	
-	if ( m_pawn.IsArrested() || IswatPawn(m_pawn).IsBeingArrestedNow() || !class'Pawn'.static.checkConscious(m_Pawn) )
+	if ( m_pawn.IsArrested() || IswatPawn(m_pawn).IsBeingArrestedNow() || !class'Pawn'.static.checkConscious(m_Pawn) || m_pawn.IsCompliant() )
 	{
 		//abort
 		return;
@@ -1740,9 +1741,17 @@ latent function DecideToStayCompliant()
 
 			CreatePickUpWeaponGoal(FoundWeaponModel);
 			if (CurrentPickUpWeaponGoal != None)
+			{
 				WaitForGoal(CurrentPickUpWeaponGoal);
+				if (CurrentPickUpWeaponGoal != None)
+				{
+					CurrentPickUpWeaponGoal.unPostGoal(self);
+					CurrentPickUpWeaponGoal.Release();
+					CurrentPickUpWeaponGoal = None;
+				}
+			}
+			
 			//ISwatEnemy(m_Pawn).GetCommanderAction().CreateBarricadeGoal(???, false, false);
-			CurrentPickUpWeaponGoal = None;
 		}
 	}
 	else

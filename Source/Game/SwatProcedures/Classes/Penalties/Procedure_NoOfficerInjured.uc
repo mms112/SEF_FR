@@ -15,13 +15,13 @@ function PostInitHook()
 
 function OnPawnDamaged(Pawn Pawn, Actor Damager)
 {
-    if( !Pawn.IsA('SwatOfficer') && !Pawn.IsA('SwatPlayer') ) return;
+    if( !Pawn.IsA('SwatOfficer') && !Pawn.IsA('SwatPlayer') && !Pawn.IsA('SwatHostage') ) return;
 
     // For coop, we want to allow this penalty, but only if the damager is from another player.
     // Self-damage should not affect this penalty.
     if( Pawn.IsA('SwatPlayer') && Pawn == Damager) return;
 
-    if( !Damager.IsA('SwatPlayer') )
+    if( !Damager.IsA('SwatPlayer') && !Pawn.IsA('SwatHostage') )
     {
         if (GetGame().DebugLeadership)
             log("[LEADERSHIP] "$class.name
@@ -31,9 +31,16 @@ function OnPawnDamaged(Pawn Pawn, Actor Damager)
         return; //we only penalize the player if they did the Injuring
     }
 
-    Add( Pawn, InjuredOfficers );
-	TriggerPenaltyMessage(Pawn(Damager));
-    GetGame().CampaignStats_TrackPenaltyIssued();
+	if (!Pawn.IsA('SwatHostage'))
+	{
+		Add( Pawn, InjuredOfficers );
+		GetGame().CampaignStats_TrackPenaltyIssued();
+		TriggerPenaltyMessage(Pawn(Damager));
+	}
+	else
+	{
+		GetGame().PenaltyTriggeredMessage(Pawn(Damager), "Hostage injured");
+	}
 
     if (GetGame().DebugLeadership)
         log("[LEADERSHIP] "$class.name

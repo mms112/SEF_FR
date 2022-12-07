@@ -219,16 +219,7 @@ latent function AttackTarget()
 		instantFail(ACT_NO_WEAPONS_AVAILABLE);
 	}
 
-    ISwatAI(m_pawn).UnLockAim();
-	
-	/*
-	if (!bHavePerfectAim)
-		AimAtActor(Target);
-	else
-		AimAtPoint(Pawn(Target).GetHeadLocation());
-	*/
-	LatentAimAtActor(Target);
-	
+	AimAtActor(Target);
     // @HACK: See comments in ISwatAI::LockAim for more info.
     ISwatAI(m_pawn).LockAim();
 

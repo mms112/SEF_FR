@@ -178,17 +178,15 @@ Begin:
 
     if (ShouldAttackWhileFleeing())
 	{
-		if ( CurrentMoveToActorGoal == None ) //dont attack if escape as already started 
-			AttackWhileFleeing();
+		AttackWhileFleeing();
 	}
 	else 
 	{
 		// if we're not attacking while fleeing, use the full body flee (movement) animations
 		SwapInFullBodyFleeAnimations();
 	}
-	
-	if ( CurrentAttackTargetGoal == None) //dont escape if we are attaccking
-		Escape();
+
+    Escape();
     
 	// let the commander know to clean up after this particular behavior
 	ISwatEnemy(m_Pawn).GetEnemyCommanderAction().FinishedMovingEngageBehavior();

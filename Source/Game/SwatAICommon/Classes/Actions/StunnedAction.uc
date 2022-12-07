@@ -740,5 +740,5 @@ defaultproperties
 {
     satisfiesGoal = class'StunnedGoal'
     MinRequiredFleeDistanceFromOfficer = 200.0
-	ThreatCooldown = 2.0
+	ThreatCooldown = 1.0
 }
