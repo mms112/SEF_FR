@@ -58,7 +58,7 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
 	
 	if (Pawn.IsA('SwatEnemy') && ISwatEnemy(Pawn).ThreatTimerIsRunning())
 	{
-		GetGame().PenaltyTriggeredMessage(Pawn(Incapacitator) , "Threat Timer running: No penalty");
+		//GetGame().PenaltyTriggeredMessage(Pawn(Incapacitator) , "Threat Timer running: No penalty");
 		return; //Threat Timer was still running so the force was authorized
 	}
 	
@@ -75,7 +75,7 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
     }
 	
 	//running close in front of an officer with a gun is considered a threat
-	if ( ISwatEnemy(Pawn).GetCurrentState() == EnemyState_Flee )
+	/*if ( ISwatEnemy(Pawn).GetCurrentState() == EnemyState_Flee )
     {    
 		//GetGame().PenaltyTriggeredMessage(Pawn(Killer) , "Enemy flee");
 		if ( VSize(Pawn.Location - Incapacitator.Location) < 250  && !ISwatEnemy(Pawn).GetEnemyCommanderAction().HasFledWithoutUsableWeapon()  ) 
@@ -83,7 +83,7 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
 			GetGame().PenaltyTriggeredMessage(Pawn(Incapacitator) , "Enemy ran with weapon: No penalty");
 			return; 
 		}
-	}
+	}*/
 
     AssertNotInArray( Pawn, IncapacitatedEnemies, 'IncapacitatedEnemies' );
     Add( Pawn, IncapacitatedEnemies );

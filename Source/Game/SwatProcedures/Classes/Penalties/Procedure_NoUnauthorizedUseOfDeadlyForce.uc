@@ -49,7 +49,7 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
 	
 	if (Pawn.IsA('SwatEnemy') && ISwatEnemy(Pawn).ThreatTimerIsRunning())
 	{
-		GetGame().PenaltyTriggeredMessage(Pawn(Killer) , "Threat Timer running: No penalty");
+		//GetGame().PenaltyTriggeredMessage(Pawn(Killer) , "Threat Timer running: No penalty");
 		return; //Threat Timer was still running so the force was authorized
 	}
 
@@ -64,7 +64,7 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
     }
 	
 	//running close in front of an officer with a gun is considered a threat
-	if ( ISwatEnemy(Pawn).GetCurrentState() == EnemyState_Flee  )
+	/*if ( ISwatEnemy(Pawn).GetCurrentState() == EnemyState_Flee  )
     {    
 		//GetGame().PenaltyTriggeredMessage(Pawn(Killer) , "Enemy flee " $!ISwatEnemy(Pawn).GetEnemyCommanderAction().HasFledWithoutUsableWeapon()$  " " );
 		if ( VSize(Pawn.Location - Killer.Location) < 250 && !ISwatEnemy(Pawn).GetEnemyCommanderAction().HasFledWithoutUsableWeapon() ) 
@@ -72,7 +72,7 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
 			GetGame().PenaltyTriggeredMessage(Pawn(Killer) , "Enemy ran with weapon: No penalty");
 			return; 
 		}
-	}
+	}*/
 	
 
     AssertNotInArray( Pawn, KilledEnemies, 'KilledEnemies' );

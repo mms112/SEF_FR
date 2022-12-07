@@ -6577,7 +6577,7 @@ exec function LeanLeftN(bool bPressed)
 			return;
 		}
 	
-		if ( bHoldCommand == 1 )
+		if ( bHoldCommand == 0 )
 		{
 			if (SwatPlayer(Pawn).LWS == Lean_Right)
 				return;
@@ -6587,13 +6587,7 @@ exec function LeanLeftN(bool bPressed)
 			if (SwatPlayer(Pawn).LWS == Lean_Left)
 				SwatPlayer(Pawn).LeanWalk("left");
 			return;
-		}
-		else if ( bHoldCommand == 0 && bLeanLeft == 1)
-		{
-			bLeanLeft=0;
-			SwatPlayer(Pawn).LeanWalk("left");
-			return;
-		}
+		}e
 		else
 		{
 			SwatPlayer(Pawn).LeanWalk("left");
@@ -6602,7 +6596,7 @@ exec function LeanLeftN(bool bPressed)
 	}
 	else
 	{
-		//bLeanleft=0;
+		bLeanleft=0;
 	}
 	
 }
@@ -6617,7 +6611,7 @@ exec function LeanRightN(bool bPressed)
 			return;
 		}
 
-		if ( bHoldCommand == 1 )
+		if ( bHoldCommand == 0 )
 		{
 			if (SwatPlayer(Pawn).LWS == Lean_Left)
 				return;
@@ -6629,12 +6623,6 @@ exec function LeanRightN(bool bPressed)
 				SwatPlayer(Pawn).LeanWalk("right");
 			return;
 		}
-		else if ( bHoldCommand == 0 && bLeanRight == 1)
-		{
-			bLeanRight=0;
-			SwatPlayer(Pawn).LeanWalk("right");
-			return;
-		}
 		else 
 		{
 			SwatPlayer(Pawn).LeanWalk("right");
@@ -6643,7 +6631,7 @@ exec function LeanRightN(bool bPressed)
 	}
 	else
 	{
-		//bLeanRight=0;
+		bLeanRight=0;
 	}
 	
 }
