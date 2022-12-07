@@ -57,7 +57,7 @@ function bool		IsAThreat();
 function bool		IAmThreat();
 function			BecomeAThreat();
 function UnbecomeAThreat(optional bool UseCooldown, optional float CooldownDuration);
-function bool ThreatTimerIsOver();
+function bool ThreatTimerIsRunning();
 
 ///////////////////////////////////////////////////////////////////////////////
 //

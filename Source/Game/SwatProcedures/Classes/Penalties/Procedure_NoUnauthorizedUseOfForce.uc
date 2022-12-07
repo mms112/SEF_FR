@@ -45,15 +45,24 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
 //       return; //the force was authorized
 //    }
 
-    if (Pawn.IsA('SwatEnemy') && ISwatEnemy(Pawn).IAmThreat())
+    if (Pawn.IsA('SwatEnemy') && ISwatEnemy(Pawn).IAmThreat() && !ISwatAI(Pawn).IsCompliant() && !ISwatAI(Pawn).IsArrested() )	
     {
         if (GetGame().DebugLeadership)
             log("[LEADERSHIP] "$class.name
                 $"::OnPawnIncapacitated() did *not* add "$Pawn.name
                 $" to its list of IncapacitatedEnemies because the SwatEnemy was a threat (so the force was authorized).");
 
+		ISwatEnemy(Pawn).UnbecomeAThreat(true, 1.0);
         return; //the force was authorized
     }
+	
+	if (Pawn.IsA('SwatEnemy') && ISwatEnemy(Pawn).ThreatTimerIsRunning())
+	{
+		GetGame().PenaltyTriggeredMessage(Pawn(Incapacitator) , "Threat Timer running: No penalty");
+		return; //Threat Timer was still running so the force was authorized
+	}
+	
+	ISwatEnemy(Pawn).UnbecomeAThreat(true, 1.0);
 
     if( !Incapacitator.IsA('SwatPlayer') && Pawn(Incapacitator).GetActiveItem().GetSlot() != Slot_Detonator && !Incapacitator.IsA('SniperPawn'))
     {
@@ -69,9 +78,9 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
 	if ( ISwatEnemy(Pawn).GetCurrentState() == EnemyState_Flee )
     {    
 		//GetGame().PenaltyTriggeredMessage(Pawn(Killer) , "Enemy flee");
-		if ( VSize(Pawn.Location - Incapacitator.Location) < 150  && !ISwatEnemy(Pawn).GetEnemyCommanderAction().HasFledWithoutUsableWeapon()  ) 
+		if ( VSize(Pawn.Location - Incapacitator.Location) < 250  && !ISwatEnemy(Pawn).GetEnemyCommanderAction().HasFledWithoutUsableWeapon()  ) 
 		{
-			//GetGame().PenaltyTriggeredMessage(Pawn(Killer) , "Enemy flee: no penalty");
+			GetGame().PenaltyTriggeredMessage(Pawn(Incapacitator) , "Enemy ran with weapon: No penalty");
 			return; 
 		}
 	}

@@ -1137,23 +1137,20 @@ function UnbecomeAThreat(optional bool bAfterTime, optional float Delay) //Not i
 			}
 			ThreatTimer.StartTimer(Delay, false);
 		}
-		else
-		{
-			FinishedThreatTimer();
-		}
+		
+		bThreat = false;
+		SwatAIRepository(Level.AIRepo).GetHive().NotifyEnemyUnbecameThreat(self);
 	}
 }
 
 simulated function FinishedThreatTimer()
 {
 	log(Name $ " is not a Threat anymore!");
-	bThreat = false;
-	SwatAIRepository(Level.AIRepo).GetHive().NotifyEnemyUnbecameThreat(self);
 }
 
-function bool ThreatTimerIsOver()
+function bool ThreatTimerIsRunning()
 {
-	return !ThreatTimer.IsRunning();
+	return ThreatTimer.IsRunning();
 }
 
 

@@ -133,19 +133,12 @@ latent function MoveToAttackEnemy()
 	if ((m_Pawn.IsA('SwatEnemy')) && ((!m_Pawn.IsA('SwatUndercover')) || (!m_Pawn.IsA('SwatGuard'))) && !ISwatEnemy(m_Pawn).IsAThreat() && (m_Pawn.GetActiveItem() != None))
 	{
 		ISwatEnemy(m_Pawn).BecomeAThreat();
-		yield();
 	}
 }
 
 latent function AttackEnemyWithWeapon()
 {
-    if ((m_Pawn.IsA('SwatEnemy')) && ((!m_Pawn.IsA('SwatUndercover')) || (!m_Pawn.IsA('SwatGuard'))) && !ISwatEnemy(m_Pawn).IsAThreat() && (m_Pawn.GetActiveItem() != None))
-	{
-		ISwatEnemy(m_Pawn).BecomeAThreat();
-		yield();
-	}
-	
-	CurrentAttackTargetGoal = new class'AttackTargetGoal'(weaponResource(), GetOfficerTarget());
+    CurrentAttackTargetGoal = new class'AttackTargetGoal'(weaponResource(), GetOfficerTarget());
     assert(CurrentAttackTargetGoal != None);
 	CurrentAttackTargetGoal.AddRef();
 
@@ -154,7 +147,10 @@ latent function AttackEnemyWithWeapon()
 
     // post the attack target goal
 	waitForGoal(CurrentAttackTargetGoal.postGoal(self));
-	
+	if ((m_Pawn.IsA('SwatEnemy')) && ((!m_Pawn.IsA('SwatUndercover')) || (!m_Pawn.IsA('SwatGuard'))) && !ISwatEnemy(m_Pawn).IsAThreat() && (m_Pawn.GetActiveItem() != None))
+	{
+		ISwatEnemy(m_Pawn).BecomeAThreat();
+	}
 	CurrentAttackTargetGoal.unPostGoal(self);
 
 	if (! class'Pawn'.static.checkConscious(GetOfficerTarget()))

@@ -46,6 +46,12 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
 				
 			return; //the deadly force was authorized
     }
+	
+	if (Pawn.IsA('SwatEnemy') && ISwatEnemy(Pawn).ThreatTimerIsRunning())
+	{
+		GetGame().PenaltyTriggeredMessage(Pawn(Killer) , "Threat Timer running: No penalty");
+		return; //Threat Timer was still running so the force was authorized
+	}
 
     if( !Killer.IsA('SwatPlayer') && Pawn(Killer).GetActiveItem().GetSlot() != Slot_Detonator && !Killer.IsA('SniperPawn'))
     {
@@ -61,9 +67,9 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
 	if ( ISwatEnemy(Pawn).GetCurrentState() == EnemyState_Flee  )
     {    
 		//GetGame().PenaltyTriggeredMessage(Pawn(Killer) , "Enemy flee " $!ISwatEnemy(Pawn).GetEnemyCommanderAction().HasFledWithoutUsableWeapon()$  " " );
-		if ( VSize(Pawn.Location - Killer.Location) < 150 && !ISwatEnemy(Pawn).GetEnemyCommanderAction().HasFledWithoutUsableWeapon() ) 
+		if ( VSize(Pawn.Location - Killer.Location) < 250 && !ISwatEnemy(Pawn).GetEnemyCommanderAction().HasFledWithoutUsableWeapon() ) 
 		{
-			//GetGame().PenaltyTriggeredMessage(Pawn(Killer) , "Enemy flee: no penalty");
+			GetGame().PenaltyTriggeredMessage(Pawn(Killer) , "Enemy ran with weapon: No penalty");
 			return; 
 		}
 	}
