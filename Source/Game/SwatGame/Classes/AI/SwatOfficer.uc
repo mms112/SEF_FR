@@ -1339,8 +1339,17 @@ function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtecti
     {
         return;
     }
+	
+	if ( LoadOut.HasRiotHelmet() )
+	{
+		// Riot helmet reduces by the argument, as opposed to original method (since gas masks will ALWAYS provide immunity to CS gas)
+		if (Level.NetMode == NM_Standalone)
+			DistanceEffect -= (1.0 - SPPlayerProtectiveEquipmentDurationScaleFactor);
+		else
+			DistanceEffect -= (1.0 - MPPlayerProtectiveEquipmentDurationScaleFactor);
+	}
 
-    if (DistanceEffect > FRand())
+    if (DistanceEffect < FRand())
     {
         return;
     }
