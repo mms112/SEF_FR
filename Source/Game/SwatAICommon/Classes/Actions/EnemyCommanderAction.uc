@@ -1711,7 +1711,6 @@ latent function DecideToStayCompliant()
 		{
 			if (GetCurrentMorale() >= class'EnemyCommanderActionConfig'.default.LeaveCompliantStateMoraleThreshold)
 			{
-				FoundWeaponModel = ISwatEnemy(m_Pawn).FindNearbyWeaponModel();
 				break;
 			}
 			
@@ -1722,6 +1721,14 @@ latent function DecideToStayCompliant()
 			log(name @ "DecideToStayCompliant: morale now:" @ GetCurrentMorale());
 		
 	}
+	
+	while (!resource.requiredResourcesAvailable(class'BarricadeGoal'.static.GetDefaultPriority(), class'BarricadeGoal'.static.GetDefaultPriority()))
+	{
+		//Do not leave compliant while we are stunned
+		yield();
+	}
+	
+	FoundWeaponModel = ISwatEnemy(m_Pawn).FindNearbyWeaponModel();
 
 	if (FoundWeaponModel != None)
 	{
@@ -1778,9 +1785,17 @@ latent function DecideToStayCompliant()
 
 latent function AmbushCompliant()
 {
+	log("DecideToStayCompliant: AmbushCompliant() with morale:" @ GetCurrentMorale());
+	
 	//we ambush officers!
 	// Sleep for a random amount of time for this "tick"
 	Sleep(frand() * 20.0);
+	
+	while (!resource.requiredResourcesAvailable(class'BarricadeGoal'.static.GetDefaultPriority(), class'BarricadeGoal'.static.GetDefaultPriority()))
+	{
+		//Do not leave compliant while we are stunned
+		yield();
+	}
 	
 	if ( m_pawn.IsArrested() || IswatPawn(m_pawn).IsBeingArrestedNow() || !class'Pawn'.static.checkConscious(m_Pawn) || (ISwatEnemy(m_Pawn).GetBackupWeapon() == None) )
 	{
@@ -1797,7 +1812,6 @@ latent function AmbushCompliant()
 	
 	ChangeMorale(GetUnobservedComplianceMoraleModification(), "Unobserved Compliance");
 	
-	log("DecideToStayCompliant: AmbushCompliant() with morale:" @ GetCurrentMorale());
 	ISwatAI(m_Pawn).SetIsCompliant(false);
 	RemoveComplianceGoal();
 	ISwatAICharacter(m_Pawn).SetCanBeArrested(false);
@@ -1844,7 +1858,6 @@ state Running
 	// wait until something happens
 	if (m_Pawn.IsCompliant() && !m_Pawn.IsArrested())
 	{
-		
 		if (CurrentAttackTargetGoal != None)
 		{
 			CurrentAttackTargetGoal.unPostGoal(self);
@@ -1858,6 +1871,12 @@ state Running
 
 			CurrentEngageOfficerGoal.Release();
 			CurrentEngageOfficerGoal = None;
+		}
+		
+		while (!resource.requiredResourcesAvailable(class'BarricadeGoal'.static.GetDefaultPriority(), class'BarricadeGoal'.static.GetDefaultPriority()))
+		{
+			//Do not leave compliant while we are stunned
+			yield();
 		}
 		
 		if ( ISwatEnemy(m_Pawn).GetBackupWeapon() != None && !bAlreadyComplied && !ISwatPawn(m_pawn).IsBeingArrestedNow() && !m_pawn.IsArrested() ) //we just ambush once
