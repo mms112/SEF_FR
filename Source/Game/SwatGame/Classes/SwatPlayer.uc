@@ -2895,8 +2895,17 @@ function ReactToCSGas( Actor GasContainer,
 		// Protects from the effects of gas, so no sense in doing this
         return;
     }
+	
+	if ( GetLoadOut().HasRiotHelmet() )
+	{
+		// Riot helmet reduces by the argument, as opposed to original method (since gas masks will ALWAYS provide immunity to CS gas)
+		if (Level.NetMode == NM_Standalone)
+			DistanceEffect -= (1.0 - SPPlayerProtectiveEquipmentDurationScaleFactor);
+		else
+			DistanceEffect -= (1.0 - MPPlayerProtectiveEquipmentDurationScaleFactor);
+	}
 
-	if (DistanceEffect > FRand())
+	if (DistanceEffect < FRand())
     {
         return;
     }
@@ -2905,17 +2914,8 @@ function ReactToCSGas( Actor GasContainer,
         Duration *= DistanceEffect;
     }
 
-	if ( GetLoadOut().HasRiotHelmet() )
-	{
-		// Riot helmet reduces by the argument, as opposed to original method (since gas masks will ALWAYS provide immunity to CS gas)
-		if (Level.NetMode == NM_Standalone)
-			Duration *= SPPlayerProtectiveEquipmentDurationScaleFactor;
-		else
-			Duration *= MPPlayerProtectiveEquipmentDurationScaleFactor;
-
-		if (Duration <= 0)
+	if (Duration <= 0)
 			return; // no sense bothering to set up effects if no duration
-	}
 
     //cheat
     if (Controller != None && Controller.bGodMode)
