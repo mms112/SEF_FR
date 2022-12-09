@@ -1323,7 +1323,7 @@ function ReactToFlashbangGrenade(
 //
 // IReactToCSGas implementation
 
-function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtectiveEquipmentDurationScaleFactor, float MPPlayerProtectiveEquipmentDurationScaleFactor)
+function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtectiveEquipmentDurationScaleFactor, float MPPlayerProtectiveEquipmentDurationScaleFactor, optional bool Dissipating)
 {
 	local float Distance;
     local float DistanceEffect;
@@ -1343,7 +1343,9 @@ function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtecti
 	if ( LoadOut.HasRiotHelmet() )
 	{
 		// Riot helmet reduces by the argument, as opposed to original method (since gas masks will ALWAYS provide immunity to CS gas)
-		if (Level.NetMode == NM_Standalone)
+		if (Dissipating)
+			DistanceEffect = 0.0;
+		else if (Level.NetMode == NM_Standalone)
 			DistanceEffect -= (1.0 - SPPlayerProtectiveEquipmentDurationScaleFactor);
 		else
 			DistanceEffect -= (1.0 - MPPlayerProtectiveEquipmentDurationScaleFactor);

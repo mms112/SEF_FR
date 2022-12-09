@@ -2872,7 +2872,8 @@ simulated function ClientDoFlashbangShakeReaction()
 function ReactToCSGas( Actor GasContainer,
                        float Duration,
                        float SPPlayerProtectiveEquipmentDurationScaleFactor,
-                       float MPPlayerProtectiveEquipmentDurationScaleFactor )
+                       float MPPlayerProtectiveEquipmentDurationScaleFactor,
+					   optional bool Dissipating )
 {
     local name Reason;
     local name NewControllerState;
@@ -2899,7 +2900,9 @@ function ReactToCSGas( Actor GasContainer,
 	if ( GetLoadOut().HasRiotHelmet() )
 	{
 		// Riot helmet reduces by the argument, as opposed to original method (since gas masks will ALWAYS provide immunity to CS gas)
-		if (Level.NetMode == NM_Standalone)
+		if (Dissipating)
+			DistanceEffect = 0.0;
+		else if (Level.NetMode == NM_Standalone)
 			DistanceEffect -= (1.0 - SPPlayerProtectiveEquipmentDurationScaleFactor);
 		else
 			DistanceEffect -= (1.0 - MPPlayerProtectiveEquipmentDurationScaleFactor);

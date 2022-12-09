@@ -22,4 +22,4 @@ simulated function bool IsGassed();
 //     equipment that protects him from gas, then the duration of 
 //     effect will be scaled by this value. 
 //     I.e., PlayerDuration *= MPPlayerProtectiveEquipmentDurationScaleFactor
-function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtectiveEquipmentDurationScaleFactor, float MPPlayerProtectiveEquipmentDurationScaleFactor);
+function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtectiveEquipmentDurationScaleFactor, float MPPlayerProtectiveEquipmentDurationScaleFactor, optional bool Dissipating);

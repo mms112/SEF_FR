@@ -79,7 +79,8 @@ simulated state Active
                         self,
                         ReactionDuration,
                         SPPlayerProtectiveEquipmentDurationScaleFactor,
-                        MPPlayerProtectiveEquipmentDurationScaleFactor);
+                        MPPlayerProtectiveEquipmentDurationScaleFactor,
+						Now > (DetonatedTime + GasEmissionDuration - 10.0));
 
 #if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
                     if (bRenderDebugInfo)

@@ -907,7 +907,7 @@ function ReactToFlashbangGrenade(
 //
 // IReactToCSGas implementation
 
-function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtectiveEquipmentDurationScaleFactor, float MPPlayerProtectiveEquipmentDurationScaleFactor)
+function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtectiveEquipmentDurationScaleFactor, float MPPlayerProtectiveEquipmentDurationScaleFactor, optional bool Dissipating)
 {
     local float Distance;
     local float DistanceEffect;
