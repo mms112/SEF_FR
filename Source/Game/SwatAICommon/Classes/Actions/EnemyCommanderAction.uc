@@ -1707,7 +1707,7 @@ latent function DecideToStayCompliant()
 		Sleep(FRand() * 2.0);
 
 		// Increase moral when not being guarded (unobserved)
-		if (ISwatAI(m_Pawn).IsUnobservedByOfficers())
+		if (ISwatAI(m_Pawn).IsUnobservedByOfficers() && !ISwatAI(m_Pawn).GetCommanderAction().IsAffectedByStun())
 		{
 			if (GetCurrentMorale() >= class'EnemyCommanderActionConfig'.default.LeaveCompliantStateMoraleThreshold)
 			{
@@ -1720,12 +1720,6 @@ latent function DecideToStayCompliant()
 		if (m_pawn.logTyrion)
 			log(name @ "DecideToStayCompliant: morale now:" @ GetCurrentMorale());
 		
-	}
-	
-	while (!resource.requiredResourcesAvailable(class'BarricadeGoal'.static.GetDefaultPriority(), class'BarricadeGoal'.static.GetDefaultPriority()))
-	{
-		//Do not leave compliant while we are stunned
-		yield();
 	}
 	
 	FoundWeaponModel = ISwatEnemy(m_Pawn).FindNearbyWeaponModel();
@@ -1791,7 +1785,7 @@ latent function AmbushCompliant()
 	// Sleep for a random amount of time for this "tick"
 	Sleep(frand() * 20.0);
 	
-	while (!resource.requiredResourcesAvailable(class'BarricadeGoal'.static.GetDefaultPriority(), class'BarricadeGoal'.static.GetDefaultPriority()))
+	while (ISwatAI(m_Pawn).GetCommanderAction().IsAffectedByStun())
 	{
 		//Do not leave compliant while we are stunned
 		yield();
@@ -1873,7 +1867,7 @@ state Running
 			CurrentEngageOfficerGoal = None;
 		}
 		
-		while (!resource.requiredResourcesAvailable(class'BarricadeGoal'.static.GetDefaultPriority(), class'BarricadeGoal'.static.GetDefaultPriority()))
+		while (ISwatAI(m_Pawn).GetCommanderAction().IsAffectedByStun())
 		{
 			//Do not leave compliant while we are stunned
 			yield();

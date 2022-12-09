@@ -1185,6 +1185,16 @@ function NotifyStung(Actor Grenade, vector StungGrenadeLocation, float StunnedDu
 	}
 }
 
+function bool IsAffectedByStun()
+{
+	return ((CurrentPepperSprayedGoal != None) && !CurrentPepperSprayedGoal.hasCompleted()) ||
+		   ((CurrentFlashbangedGoal != None) && !CurrentFlashbangedGoal.hasCompleted()) ||
+		   ((CurrentGassedGoal != None) && !CurrentGassedGoal.hasCompleted()) ||
+		   ((CurrentTasedGoal != None) && !CurrentTasedGoal.hasCompleted()) ||
+		   ((CurrentStunnedByC2Goal != None) && !CurrentStunnedByC2Goal.hasCompleted()) ||
+		   ((CurrentStungGoal != None) && !CurrentStungGoal.hasCompleted());
+}
+
 // subclasses should override
 protected function bool WillReactToGrenadeBeingThrown() { return true; }
 
