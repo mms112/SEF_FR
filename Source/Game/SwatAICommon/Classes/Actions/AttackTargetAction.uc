@@ -394,15 +394,15 @@ protected latent function ShootInAimDirection(FiredWeapon CurrentWeapon)
 	if (WaitTimeBeforeFiring > 0)
 		Sleep(WaitTimeBeforeFiring);
 		
-		LatentAimAtActor(Target);
+		LatentAimAtActor(Target, ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring());
 		
 	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
-	TimeElapsed = Level.TimeSeconds - StartActionTime;
+	/*TimeElapsed = Level.TimeSeconds - StartActionTime;
 	MandatedWait = ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring();
 	if(TimeElapsed < MandatedWait) 
 	{
 		Sleep(MandatedWait - TimeElapsed);
-	}
+	}*/
 
 	ShootWeaponAt(Target);	// (actual shooting in aim direction is handled in "GetAimRotation"
 	ShotsFired++;

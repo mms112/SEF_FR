@@ -37,20 +37,13 @@ var config float 			HighSkillNoDropChance;
 
 defaultproperties
 {
-	/* OLD SEF VALUES
+	/* OLD SEF VALUES */
     LowSkillMinTimeBeforeShooting = 1.0
     LowSkillMaxTimeBeforeShooting = 1.7
     MediumSkillMinTimeBeforeShooting = 0.9
     MediumSkillMaxTimeBeforeShooting = 1.3
     HighSkillMinTimeBeforeShooting = 0.6
     HighSkillMaxTimeBeforeShooting = 1.0
-	*/
-	LowSkillMinTimeBeforeShooting = 0.0
-    LowSkillMaxTimeBeforeShooting = 0.0
-    MediumSkillMinTimeBeforeShooting = 0.0
-    MediumSkillMaxTimeBeforeShooting = 0.0
-    HighSkillMinTimeBeforeShooting = 0.0
-    HighSkillMaxTimeBeforeShooting = 0.0
 	
 	LowSkillNoDropChance=0.1
 	MediumSkillNoDropChance=0.3
