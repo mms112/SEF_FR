@@ -1700,7 +1700,7 @@ latent function DecideToStayCompliant()
 		return;
 	}
 
-	while (class'Pawn'.static.checkConscious(m_Pawn))
+	while (class'Pawn'.static.checkConscious(m_Pawn) && !m_pawn.IsArrested())
 	{	
 		// Sleep for a random amount of time for this "tick"
 		// This might seem high, but keep in mind that half the values are going to be below this and the effect can stack.
@@ -1720,6 +1720,12 @@ latent function DecideToStayCompliant()
 		if (m_pawn.logTyrion)
 			log(name @ "DecideToStayCompliant: morale now:" @ GetCurrentMorale());
 		
+	}
+	
+	if (m_pawn.IsArrested() || IswatPawn(m_pawn).IsBeingArrestedNow() || !class'Pawn'.static.checkConscious(m_Pawn))
+	{
+		//abort
+		return;
 	}
 	
 	FoundWeaponModel = ISwatEnemy(m_Pawn).FindNearbyWeaponModel();
@@ -1850,7 +1856,7 @@ state Running
 		log(Name $ " paused at time " $ Level.TimeSeconds);
 
 	// wait until something happens
-	if (m_Pawn.IsCompliant() && !m_Pawn.IsArrested())
+	if (ICanBeArrested(m_Pawn).CanBeArrestedNow() && !m_Pawn.IsArrested())
 	{
 		if (CurrentAttackTargetGoal != None)
 		{

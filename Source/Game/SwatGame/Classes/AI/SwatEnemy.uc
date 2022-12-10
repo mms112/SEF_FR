@@ -37,7 +37,7 @@ var config float						MediumSkillMaxTimeToFireFullAuto;
 var config float						HighSkillMinTimeToFireFullAuto;
 var config float						HighSkillMaxTimeToFireFullAuto;
 */
-var float unused1;
+var float NoDropRoll;
 var float unused2;
 var float unused3;
 var float unused4;
@@ -286,6 +286,7 @@ function InitializeFromArchetypeInstance()
 
 private function InitializeWeapons(EnemyArchetypeInstance Instance)
 {
+	NoDropRoll = FRand();
     PrimaryWeapon = Instance.PrimaryWeapon;
     BackupWeapon = Instance.BackupWeapon;
 
@@ -690,7 +691,6 @@ simulated final function DropActiveWeapon(optional vector WeaponSpaceDropDirecti
 
 simulated final function DropAllWeapons(optional vector WeaponSpaceDropDirection, optional float DropImpulseMagnitude)
 {
-	local HandheldEquipment PrimaryWeapon, BackupWeapon;
 	local HandheldEquipmentModel BackupWeaponModel;
 
     mplog( self$"---SwatEnemy::DropAllWeapons()." );
@@ -698,14 +698,11 @@ simulated final function DropAllWeapons(optional vector WeaponSpaceDropDirection
     if ( Level.IsCoopServer )
         NotifyClientsToDropAllWeapons();
 
-	PrimaryWeapon = GetPrimaryWeapon();
 
 	if ((PrimaryWeapon != None) && PrimaryWeapon.IsA('FiredWeapon'))
 	{
         DropWeapon(PrimaryWeapon, WeaponSpaceDropDirection*DropImpulseMagnitude);
 	}
-
-	BackupWeapon = GetBackupWeapon();
 
 	if ((BackupWeapon != None) && BackupWeapon.IsA('FiredWeapon'))
 	{
@@ -721,6 +718,15 @@ simulated final function DropAllWeapons(optional vector WeaponSpaceDropDirection
 		{
             mplog( "...3" );
 			BackupWeapon.AIInterrupt();
+			BackupWeapon = None;
+			ReplicatedBackupWeaponClass = None;
+			ReplicatedBackupWeaponAmmoClass = None;
+		}
+		else
+		{
+			BackupWeapon = None;
+			ReplicatedBackupWeaponClass = None;
+			ReplicatedBackupWeaponAmmoClass = None;
 		}
 	}
 }
@@ -1072,12 +1078,15 @@ function bool ShouldDropWeaponInstantly()
 		case EnemySkill_High:
 			//Chance = HighSkillComplyInstantDropChance;
 			Chance = class'SwatEnemyConfig'.default.HighSkillFullBodyHitChance;
+			break;
 		case EnemySkill_Medium:
 			//Chance = MediumSkillComplyInstantDropChance;
 			Chance = class'SwatEnemyConfig'.default.MediumSkillFullBodyHitChance;
+			break;
 		case EnemySkill_Low:
 			//Chance = LowSkillComplyInstantDropChance;
 			Chance = class'SwatEnemyConfig'.default.LowSkillFullBodyHitChance;
+			break;
 	}
 	return (FRand() < Chance);
 }
@@ -1094,14 +1103,17 @@ function bool GetNoDropWeaponChance()
 		case EnemySkill_High:
 			//Chance = HighSkillComplyInstantDropChance;
 			Chance = class'SwatEnemyConfig'.default.HighSkillNoDropChance;
+			break;
 		case EnemySkill_Medium:
 			//Chance = MediumSkillComplyInstantDropChance;
 			Chance = class'SwatEnemyConfig'.default.MediumSkillNoDropChance;
+			break;
 		case EnemySkill_Low:
 			//Chance = LowSkillComplyInstantDropChance;
 			Chance = class'SwatEnemyConfig'.default.LowSkillNoDropChance;
+			break;
 	}
-	return (FRand() < Chance);
+	return (NoDropRoll < Chance);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

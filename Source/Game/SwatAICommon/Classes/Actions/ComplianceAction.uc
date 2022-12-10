@@ -182,16 +182,6 @@ latent final function Comply()
 		PreComply();
 	}
 
-	// at this point we can be arrested, so let the goal know
-	ComplianceGoal(achievingGoal).SetCanBeArrested();
-
-    SwatAICharacter = ISwatAICharacter(m_Pawn);
-    if (SwatAICharacter != None)
-    {
-        SwatAICharacter.SetCanBeArrested(true);
-		//SwatAICharacter.SetNoForceArrested(true);
-    }
-
 	// makes sure the weapon is dropped if we are an enemy
 	if (Enemy != None)
 	{
@@ -215,6 +205,16 @@ latent final function Comply()
 			Enemy.UnbecomeAThreat(true,ThreatCooldown); 
 		}
 	}
+	
+	// at this point we can be arrested, so let the goal know
+	ComplianceGoal(achievingGoal).SetCanBeArrested();
+
+    SwatAICharacter = ISwatAICharacter(m_Pawn);
+    if (SwatAICharacter != None)
+    {
+        SwatAICharacter.SetCanBeArrested(true);
+		//SwatAICharacter.SetNoForceArrested(true);
+    }
 }
 
 state Running
