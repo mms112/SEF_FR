@@ -22,7 +22,7 @@ var private EnemySkill					Skill;
 var private bool                        bDontInvestigate;
 var private EnemyState					CurrentState;
 var private bool						bThreat;
-var bool						bIsSprinting;
+var bool								bIsSprinting;
 
 // Config Variables
 var config float						LowSkillAdditionalBaseAimError;

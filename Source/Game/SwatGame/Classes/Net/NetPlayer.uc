@@ -390,27 +390,27 @@ simulated function float InitWeight()
 	
 	//ARMOR
 	totalweight = Bodyarmor(theLoadOut.GetItemAtPocketNumber(10)).GetWeight();
-	log("Armor :" $ Bodyarmor(theLoadOut.GetItemAtPocketNumber(10)).GetWeight() $ " ");
+	//log("Armor :" $ Bodyarmor(theLoadOut.GetItemAtPocketNumber(10)).GetWeight() $ " ");
 	
 	//HELMET
 	totalweight = totalweight + Headgear(theLoadOut.GetItemAtPocketNumber(11)).GetWeight();
-	log("Helmet :" $  Headgear(theLoadOut.GetItemAtPocketNumber(11)).GetWeight() $ " ");
+	//log("Helmet :" $  Headgear(theLoadOut.GetItemAtPocketNumber(11)).GetWeight() $ " ");
 	
 	//WEAPONS
 	totalweight = totalweight + HandheldEquipment(theLoadOut.GetItemAtPocketNumber(0)).GetWeight();
-	log("Primary :" $ HandheldEquipment(theLoadOut.GetItemAtPocketNumber(0)).GetWeight() $ " ");
+	//log("Primary :" $ HandheldEquipment(theLoadOut.GetItemAtPocketNumber(0)).GetWeight() $ " ");
 	
 	totalweight = totalweight + HandheldEquipment(theLoadOut.GetItemAtPocketNumber(2)).GetWeight();
-	log("Secondary :" $ HandheldEquipment(theLoadOut.GetItemAtPocketNumber(2)).GetWeight() $ " ");
+	//log("Secondary :" $ HandheldEquipment(theLoadOut.GetItemAtPocketNumber(2)).GetWeight() $ " ");
 	
 	//OPTIWAND
 	if (theLoadOut.GetItemAtSlot(Slot_Optiwand).IsA('Optiwand'))
 	{	
 		totalWeight = totalWeight + 3.0 ;
-		log("Optiwand : 3 ");
+		//log("Optiwand : 3 ");
 	}
 	
-	log("InitialWeight : " $ totalWeight $ " ");
+	//log("InitialWeight : " $ totalWeight $ " ");
 		
 	return totalWeight;
 	
@@ -442,7 +442,7 @@ simulated function float MPweight()
 		totalweight = totalweight + ( HandheldEquipment(theLoadOut.GetItemAtPocketNumber(9)).Getweight()) ; //pocket 6
 		//log("Pocket 6 : " $ HandheldEquipment(theLoadOut.GetItemAtPocketNumber(9)).GetAvailableCount() $ "  " $ totalWeight $ " ");
 		
-		log("MPWeight : " $ totalWeight $ " ");
+		//log("MPWeight : " $ totalWeight $ " ");
 	return totalWeight;
 	
 }

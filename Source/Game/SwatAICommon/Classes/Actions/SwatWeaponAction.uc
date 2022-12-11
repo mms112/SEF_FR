@@ -184,13 +184,16 @@ final function UpdateThreatToTarget(Actor Target)
 final latent function LatentAimAtActor(Actor Target, optional float MaxWaitTime)
 {
     // only aim at if if we can
-	local float CurrentTime;
-	local float StartTime;
-
-	StartTime = Level.TimeSeconds;
-
     if (ISwatAI(m_Pawn).AnimCanAimAtDesiredActor(Target) && HasWeaponEquipped())
     {
+		// added here so server can spread information on suspect intentions before even aiming.
+		if( m_pawn.isa('SwatEnemy') )
+		{
+			UpdateThreatToTarget(Target);
+			yield();
+		}
+		//////////////////////////////
+		
         ISwatAI(m_pawn).AimAtActor(Target);
 
         // wait until we aim at what we want to
@@ -199,19 +202,11 @@ final latent function LatentAimAtActor(Actor Target, optional float MaxWaitTime)
         {
 //			log("aiming at actor update - AnimIsAimedAtDesired: " $ ISwatAI(m_pawn).AnimIsAimedAtDesired() $ " HasWeaponEquipped: " $ HasWeaponEquipped() $ " AnimAreAimingChannelsMuted: " $ ISwatAI(m_Pawn).AnimAreAimingChannelsMuted());
 			// See if we have waited past the threshold
-			if(MaxWaitTime > 0.0)
-			{
-				currentTime = Level.TimeSeconds;
-				if(CurrentTime - StartTime > MaxWaitTime && !ISwatAI(m_Pawn).AnimAreAimingChannelsMuted())
-				{
-					break;	// die
-				}
-			}
 			UpdateThreatToTarget(Target);
             yield();
+			ISwatAI(m_pawn).AimAtActor(Target);
         }
-
-		UpdateThreatToTarget(Target);
+		//UpdateThreatToTarget(Target);
     }
 }
 
@@ -277,7 +272,7 @@ latent function ShootWeaponAt(Actor Target)
     CurrentWeapon = FiredWeapon(m_pawn.GetActiveItem());    
 
 
-	if(CurrentWeapon.bAbleToMelee)
+	if(CurrentWeapon.bAbleToMelee && CurrentWeapon!= None)
 	{
 		DistanceFromTarget = Vsize( m_Pawn.Location - Target.Location ) ;
 		
@@ -300,10 +295,11 @@ latent function ShootWeaponAt(Actor Target)
 				if (FRand() < 0.5 ) //50% chance of meleeing
 				{
 					CurrentWeapon.Melee();
-					sleep(1.0); //wait for melee to finish
-			
+					sleep(2.0); //wait for melee to finish
+					
 					if (FRand() < 0.2 )
 						return; //80% chance to punch or punch AND fire
+					
 				}
 			}
 		}
@@ -313,8 +309,7 @@ latent function ShootWeaponAt(Actor Target)
 	if (CurrentWeapon!= None && !CurrentWeapon.IsEmpty())
     {
 		ISwatAI(m_Pawn).SetWeaponTarget(Target);
-	    CurrentWeapon.LatentUse();
-
+		CurrentWeapon.LatentUse();
 //		log("finished shooting at time " $ m_Pawn.Level.TimeSeconds);
     }
 }
