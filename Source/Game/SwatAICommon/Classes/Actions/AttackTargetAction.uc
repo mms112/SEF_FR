@@ -216,7 +216,18 @@ latent function AttackTarget()
 
     ISwatAI(m_pawn).UnLockAim();
 	
-	LatentAimAtActor(Target);
+	if (ISwatAI(m_Pawn).AnimCanAimAtDesiredActor(Target) && HasWeaponEquipped())
+    {
+		// added here so server can spread information on suspect intentions before even aiming.
+		if( m_pawn.isa('SwatEnemy') )
+		{
+			UpdateThreatToTarget(Target);
+			yield();
+		}
+		//////////////////////////////
+		
+        ISwatAI(m_pawn).AimAtActor(Target);
+	}
 	
     // @HACK: See comments in ISwatAI::LockAim for more info.
     ISwatAI(m_pawn).LockAim();
