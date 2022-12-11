@@ -71,7 +71,7 @@ ChatMessage=[c=ffff00]Suspect Escaped (-5)[\c]
 
 [Procedure_NoTrapsTriggered]
 Description=Tripped a trap
-ChatMessage=[c=ffff00]Triggered Trap (-10)[\c]
+ChatMessage=[c=ffff00]Triggered Trap (-5)[\c]
 
 [Procedure_NoForcedArrest]
 Description=Forced arrest penalty

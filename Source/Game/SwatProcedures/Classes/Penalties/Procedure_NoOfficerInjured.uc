@@ -37,7 +37,7 @@ function OnPawnDamaged(Pawn Pawn, Actor Damager)
 		GetGame().CampaignStats_TrackPenaltyIssued();
 		TriggerPenaltyMessage(Pawn(Damager));
 	}
-	else
+	else if (!Pawn.isIncapacitated() && !Pawn.isDead())
 	{
 		GetGame().PenaltyTriggeredMessage(Pawn(Damager), "Hostage injured");
 	}
