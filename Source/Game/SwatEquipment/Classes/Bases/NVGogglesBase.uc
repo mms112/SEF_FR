@@ -14,11 +14,11 @@ var() float EffectUpTime;
 
 // Extreme edge case that I don't feel like fixing --eez
 simulated function float GetWeight() {
-	return 0.68;		// IMPORTANT: Make sure to alter the value in DynamicLoadOutSpec.uc as well!
+	return 2.3;		// IMPORTANT: Make sure to alter the value in DynamicLoadOutSpec.uc as well!
 }
 
 simulated function float GetBulk() {
-	return 1.1466;	// IMPORTANT: Make sure to alter the value in DynamicLoadOutSpec.uc as well!
+	return 1.68;	// IMPORTANT: Make sure to alter the value in DynamicLoadOutSpec.uc as well!
 }
 
 simulated function PostBeginPlay()
@@ -341,6 +341,16 @@ static function bool IsUsableByPlayer()
 {
 	// sort of clever hack...allows the night vision goggles to be disabled, but not NVGogglesBase
 	return default.class != class'SwatEquipment.NVGogglesBase';
+}
+
+simulated function int GetProtectionType() 
+{			
+	return 4;
+}
+
+static function String GetProtectionRating()
+{
+  return "Type II";
 }
 
 defaultproperties
