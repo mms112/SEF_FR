@@ -85,6 +85,7 @@ Content/Sounds/*
 Content/Maps/*
 Content/HavokData/*
 Content/Textures/*
+System/Packages.md5
 System/*.txt
 System/*.log
 System/Swat4X.ini
