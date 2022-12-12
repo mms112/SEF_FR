@@ -129,7 +129,10 @@ simulated function float GetMtP() {
 simulated function OnProtectedRegionHit() {
 	local Pawn OwnerPawn;
 	local PlayerController OwnerController;
+	local bool WasAboveHalfMtP;
 
+	WasAboveHalfMtP = CurrentMomentumToPenetrate >= (MaxMomentumToPenetrate/2);
+	
 	CurrentMomentumToPenetrate -= CurrentBulletMtP;
 	CurrentBulletMtP *= MultiplyPerBullet;
 
@@ -137,7 +140,8 @@ simulated function OnProtectedRegionHit() {
 	    CurrentBulletMtP = MinBulletMtpReduction;
   }
   
-	if(CurrentMomentumToPenetrate < MaxMomentumToPenetrate/2) {
+	if(WasAboveHalfMtP && (CurrentMomentumToPenetrate < (MaxMomentumToPenetrate/2)))
+	{
 		switch (ArmorProtection)
 		{
 		case Level_0:
