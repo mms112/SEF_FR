@@ -31,13 +31,13 @@ function OnPawnDamaged(Pawn Pawn, Actor Damager)
         return; //we only penalize the player if they did the Injuring
     }
 
-	if (!Pawn.IsA('SwatHostage'))
+	if (!Pawn.IsA('SwatHostage') && Pawn.IsConscious())
 	{
 		Add( Pawn, InjuredOfficers );
 		GetGame().CampaignStats_TrackPenaltyIssued();
 		TriggerPenaltyMessage(Pawn(Damager));
 	}
-	else if (!Pawn.isIncapacitated() && !Pawn.isDead())
+	else if (Pawn.IsA('SwatHostage') && !Pawn.isIncapacitated() && !Pawn.isDead())
 	{
 		GetGame().PenaltyTriggeredMessage(Pawn(Damager), "Hostage injured");
 	}
