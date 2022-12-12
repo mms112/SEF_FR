@@ -2843,7 +2843,7 @@ simulated function InternalReload(optional bool QuickReload)
         if (Level.GetEngine().EnableDevTools)
             mplog( "...calling ServerRequestReload()." );
 
-		if(Weapon.Ammo.NeedsReload())
+		if(Weapon.Ammo.NeedsReload() || Weapon.Ammo.IsLastRound())
 			SwatPlayer.ServerRequestReload( SwatPlayer.GetActiveItem().GetSlot() , true ); //quick reload always when dry
 		else
 			SwatPlayer.ServerRequestReload( SwatPlayer.GetActiveItem().GetSlot() , QuickReload );
