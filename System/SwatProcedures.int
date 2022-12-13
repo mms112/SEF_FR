@@ -17,7 +17,7 @@ Description=No suspects neutralized
 Description=No civilians injured
 
 [Procedure_NoOfficersDown]
-Description=No officers down
+Description=No officers down / Player uninjured
 
 [Procedure_PlayerUninjured]
 Description=Player uninjured

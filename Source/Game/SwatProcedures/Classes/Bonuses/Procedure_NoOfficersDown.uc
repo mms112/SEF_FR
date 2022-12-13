@@ -1,6 +1,7 @@
 class Procedure_NoOfficersDown extends SwatGame.Procedure
     implements  IInterested_GameEvent_PawnIncapacitated,
-                IInterested_GameEvent_PawnDied;
+                IInterested_GameEvent_PawnDied,
+                IInterested_GameEvent_PawnDamaged;
 
 var config int Bonus;
 
@@ -13,6 +14,7 @@ function PostInitHook()
     //register for notifications that interest me
     GetGame().GameEvents.PawnIncapacitated.Register(self);
     GetGame().GameEvents.PawnDied.Register(self);
+	GetGame().GameEvents.PawnDamaged.Register(self);
 }
 
 //interface IInterested_GameEvent_PawnIncapacitated implementation
@@ -35,7 +37,15 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
 
     GetGame().CheckForCampaignDeath(Pawn);
 
-    AssertNotInArray( Pawn, DownedOfficers, 'DownedOfficers' );
+    //AssertNotInArray( Pawn, DownedOfficers, 'DownedOfficers' );
+    Add( Pawn, DownedOfficers );
+}
+
+function OnPawnDamaged(Pawn Pawn, Actor Damager)
+{
+	if (Pawn.Level.NetMode != NM_Standalone) return;
+    if (!Pawn.IsA('SwatPlayer')) return;
+
     Add( Pawn, DownedOfficers );
 }
 
@@ -57,7 +67,7 @@ function int GetCurrentValue()
 
 function string Status()
 {
-    return DownedOfficers.length
+    return GetNumActors( class'SwatPlayer' ) + GetNumActors( class'SwatOfficer' ) - DownedOfficers.length
         $"/"$( GetNumActors( class'SwatPlayer' ) + GetNumActors( class'SwatOfficer' ) );
 }
 
