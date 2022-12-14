@@ -1068,8 +1068,8 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 
     //the bullet will penetrate the protection unles it loses all of its momentum to the protection
 	//Now it will penetrate if the bullet is designed to penetrate
-	//   PenetratesProtection = (Protection.GetMtP() < Momentum);
-   PenetratesProtection = (BulletLevel >= ArmorLevel) || (Protection.GetMtP() < Momentum);
+	PenetratesProtection = (Protection.GetMtP() < Momentum);
+    //PenetratesProtection = (BulletLevel >= ArmorLevel) || (Protection.GetMtP() < Momentum);
 
     //determine DamageModifierRange
     if (PenetratesProtection)
