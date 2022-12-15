@@ -169,12 +169,25 @@ simulated function bool IsDOA()
 function OnReportableReportedToTOC(IAmReportableCharacter ReportedCharacter, Pawn Reporter)
 {
   // Freeze the timer!
+  /*
   if(ReportedCharacter == self)
   {
     log("[DOA Conversions] "$self$" was reported to TOC, so we can freeze timer "$AIData.DOATimer);
     AIData.DOATimer.TimerDelegate = None;
     AIData.DOATimer.StopTimer();
   }
+  */
+}
+
+function bool DOATimerRunning()
+{
+	return AIData.DOATimer.isRunning();
+}
+
+function DoFirstAid()
+{
+	AIData.DOATimer.TimerDelegate = None;
+    AIData.DOATimer.StopTimer();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
