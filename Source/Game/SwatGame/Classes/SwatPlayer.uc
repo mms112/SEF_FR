@@ -4075,7 +4075,7 @@ simulated final function HealLimping()
 		CurrentLimp = class'SwatPlayerConfig'.static.GetLimpThreshold() - 0.001;
 	}
 	
-	Health += 25;
+	Health += 30;
 	
 	if (Health >= 100)
 	{
