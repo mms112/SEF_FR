@@ -212,7 +212,7 @@ simulated function bool ShouldUseAlternate()
 
 simulated function float GetQualifyDuration()
 {
-    return 10.0 * GetQualifyModifier(); //seconds of bandage action
+    return 9.0 * GetQualifyModifier(); //seconds of bandage action
 }
 
 simulated function float GetQualifyModifier()
