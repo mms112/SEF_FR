@@ -594,8 +594,22 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
 
       Ammo.BallisticsLog("Momentum (before drag): "$Momentum);
       // Reduce the bullet's momentum by drag
-      Momentum -= Ammo.GetDrag() * VSize(NewHitLocation - PreviousExitLocation);
-      Ammo.BallisticsLog("Momentum (after drag): "$Momentum);
+	  if (BulletType == 45)
+	  {
+	    Ammo.BallisticsLog("Using Buckshot drag: "$3.5*Ammo.GetDrag());
+		Momentum -= 3.5 * Ammo.GetDrag() * VSize(NewHitLocation - PreviousExitLocation);
+	  }
+	  else if (BulletType == 46)
+	  {
+		Ammo.BallisticsLog("Using special ammo drag: "$Ammo.GetDrag());
+		Momentum -= Ammo.GetDrag() * VSize(NewHitLocation - PreviousExitLocation);
+	  }
+	  else
+	  {
+	    Ammo.BallisticsLog("Using normal drag: "$5.0*Ammo.GetDrag());
+		Momentum -= 5.0 * Ammo.GetDrag() * VSize(NewHitLocation - PreviousExitLocation);
+	  }
+      Ammo.BallisticsLog("Momentum (after drag): "$Momentum$" Distance: "$VSize(HitLocation - PreviousExitLocation));
 
       if(Momentum < 0.0) {
         Ammo.BallisticsLog("Momentum went < 0. Not impacting with anything (LOST BULLET)");
@@ -667,9 +681,24 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
         ExitNormal,
         ExitMaterial )
     {
-        Ammo.BallisticsLog("IMPACT: Momentum before drag: "$Momentum);
-        Momentum -= Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
-        Ammo.BallisticsLog("IMPACT: Momentum after drag: "$Momentum);
+        Ammo.BallisticsLog("Momentum (before drag): "$Momentum);
+		// Reduce the bullet's momentum by drag
+		if (BulletType == 45)
+		{
+			Ammo.BallisticsLog("Using Buckshot drag: "$3.5*Ammo.GetDrag());
+			Momentum -= 3.5 * Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
+		}
+		else if (BulletType == 46)
+		{
+			Ammo.BallisticsLog("Using special ammo drag: "$Ammo.GetDrag());
+			Momentum -= Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
+		}
+		else
+		{
+			Ammo.BallisticsLog("Using normal drag: "$5.0*Ammo.GetDrag());
+			Momentum -= 5.0 * Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
+		}
+		Ammo.BallisticsLog("Momentum (after drag): "$Momentum$" Distance: "$VSize(HitLocation - PreviousExitLocation));
 
         if(Momentum < Ammo.GetMinimumMomentum())
         {
@@ -706,7 +735,7 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
             break; // the bullet embedded itself in the target
 
         // the bullet passed through the target
-        PreviousExitLocation = ExitLocation;
+        PreviousExitLocation = HitLocation;
     }
 }
 
@@ -896,7 +925,8 @@ simulated function bool HandleBallisticImpact(
         Damage += Ammo.InternalDamage;
 	else
 	{
-		if (Victim.isa('SwatPawn') || Victim.isa('SwatPlayer') )
+		if ((Victim.isa('SwatPawn') || Victim.isa('SwatPlayer') ) &&
+			(BulletType != 41))
 			 Damage +=  ( Ammo.InternalDamage /2 );
 	}	
 

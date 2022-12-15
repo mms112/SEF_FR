@@ -428,35 +428,28 @@ static function string GetTotalAmmoString()
 }
 simulated function BallisticFire(vector StartTrace, vector EndTrace)
 {
-	local vector HitLocation, HitNormal, ExitLocation, ExitNormal;
+	local vector HitLocation, HitNormal, ExitLocation, ExitNormal, PreviousExitLocation;
 	local actor Victim;
     local Material HitMaterial, ExitMaterial; //material on object that was hit
     local float Momentum;
-    local float Distance;
-    local float ActualVelocity;
-    local float VelocityRatio;
-    local float Velocity;
     local float KillEnergy;
     local int BulletType;
     local ESkeletalRegion HitRegion;
 
     Momentum = MuzzleVelocity * Ammo.Mass;
     BulletType = Ammo.GetBulletType();
-    Distance = (VSize(HitLocation - StartTrace)) / 50.4725;
-    Velocity = ((GetVc0()) + ((GetVc1()) * Distance)+((GetVc2()) * (Distance * Distance)));
-    KillEnergy = ((GetDc1()) * Velocity)+((GetDc2()) * (Velocity * Velocity));
+	//This is redefined somewhere else
+    KillEnergy = 0;
 
     Ammo.BallisticsLog("BallisticFire(): Weapon "$name
         $", shot by "$Owner.name
         $", has MuzzleVelocity="$MuzzleVelocity
         $", Ammo "$Ammo.name
-        $", Class "$BulletType
         $" has Mass="$Ammo.Mass
         $".  Initial Momentum is "$Momentum
-        $".  Velocity is "$Velocity
-        $".  Kill Energy is "$KillEnergy
-        $".  Target is at "$Distance
-        $"m.");
+        $".");
+
+    PreviousExitLocation = StartTrace;
 
     foreach TraceActors(
         class'Actor',
@@ -475,26 +468,40 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
         ExitNormal,
         ExitMaterial )
     {
-//        Ammo.BallisticsLog("IMPACT: Momentum before drag: "$Momentum);
-//        Momentum -= Ammo.GetDrag() * VSize(HitLocation - StartTrace);
-//        Ammo.BallisticsLog("IMPACT: Momentum after drag: "$Momentum);
+        Ammo.BallisticsLog("Momentum (before drag): "$Momentum);
+		// Reduce the bullet's momentum by drag
+		if (BulletType == 45)
+		{
+			Ammo.BallisticsLog("Using Buckshot drag: "$3.5*Ammo.GetDrag());
+			Momentum -= 3.5 * Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
+		}
+		else if (BulletType == 46)
+		{
+			Ammo.BallisticsLog("Using special ammo drag: "$Ammo.GetDrag());
+			Momentum -= Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
+		}
+		else
+		{
+			Ammo.BallisticsLog("Using normal drag: "$5.0*Ammo.GetDrag());
+			Momentum -= 5.0 * Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
+		}
+		Ammo.BallisticsLog("Momentum (after drag): "$Momentum$" Distance: "$VSize(HitLocation - PreviousExitLocation));
 
-        Ammo.BallisticsLog("IMPACT: KillEnergy before calculating penetration: "$KillEnergy);
-		ActualVelocity = Momentum / Ammo.Mass;
-		VelocityRatio = ActualVelocity / MuzzleVelocity;
-        KillEnergy *= VelocityRatio;
-        Ammo.BallisticsLog("IMPACT: KillEnergy before calculating penetration: "$KillEnergy);
+        if(Momentum < Ammo.GetMinimumMomentum())
+        {
+          Momentum = Ammo.GetMinimumMomentum();
+        }
 
-        if(Momentum < 0.0) {
+        if(Momentum <= 0.0) {
           Ammo.BallisticsLog("Momentum went < 0. Not impacting with anything (LOST BULLET)");
           break;
         }
-
+		
 		log("Shield Ballistic test Victim " $ Victim.name $ " Owner " $ Victim.Owner.name $ " Region " $ GetEnum(ESkeletalRegion,HitRegion) );
-
-		if( Victim.isa('HandheldEquipmentModel') && Victim.Owner.isa('Hands') )
+		
+		if( Victim.isa('HandheldEquipmentModel') && Victim.Owner.isa('Hands')  )
 		{
-	    	if ( self.Owner == Victim.Owner.Owner )
+			if ( self.Owner == Victim.Owner.Owner  )
 				continue;
 		}
 		
@@ -503,15 +510,19 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
 			if ( self.Owner == Victim.Owner )
 				continue;
 		}
-
+		
         //handle each ballistic impact until the bullet runs out of momentum and does not penetrate
-        if (Ammo.CanRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0)) {
-          // Do a ricochet
+        if (Ammo.CanRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0))
+		{
+          // the bullet ricocheted
           DoBulletRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, KillEnergy, BulletType, 0);
           break;
         }
         else if (!HandleBallisticImpact(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, HitRegion, Momentum, KillEnergy, BulletType, ExitLocation, ExitNormal, ExitMaterial))
-            break;
+            break; // the bullet embedded itself in the target
+
+        // the bullet passed through the target
+        PreviousExitLocation = HitLocation;
     }
 }
 
@@ -689,7 +700,8 @@ simulated function bool HandleBallisticImpact(
         Damage += Ammo.InternalDamage;
 	else
 	{
-		if (Victim.isa('SwatPawn') || Victim.isa('SwatPlayer') )
+		if ((Victim.isa('SwatPawn') || Victim.isa('SwatPlayer') ) &&
+			(BulletType != 41))
 			 Damage +=  ( Ammo.InternalDamage /2 );
 	}
 

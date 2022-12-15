@@ -19,7 +19,7 @@ Description=Frangible breaching rounds are commonly used when breaching doors. T
 FriendlyName=12 Gauge Frangible
 
 [000ShotgunAmmo]
-Description=000 buck is an increasingly common grade of shotgun shell among law enforcement agencies. These rounds contain 5 buckshot pellets, all 000 gauge in diameter. The pellets spread out after being fired and can inflict massive damage to unarmored targets. While the pellets are large in diameter and better at penetrating armor, 000 shells disperse fewer pellets for less overall damage.
+Description=000 buck is an increasingly common grade of shotgun shell among law enforcement agencies. These rounds contain 6 buckshot pellets, all 000 gauge in diameter. The pellets spread out after being fired and can inflict massive damage to unarmored targets. While the pellets are large in diameter and better at penetrating armor, 000 shells disperse fewer pellets for less overall damage.
 FriendlyName=000 Buck
 GUIImage=Texture'gui_tex3.ammo_000buckshotgun'
 

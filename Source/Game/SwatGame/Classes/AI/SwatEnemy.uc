@@ -1083,14 +1083,18 @@ simulated latent final function ThrowWeaponDown()
 
 function HandHeldEquipmentModel FindNearbyWeaponModel()
 {
+	local int searchIdx;
 	local HandHeldEquipmentModel Target;
 
-	ForEach DynamicActors(class'HandheldEquipmentModel', Target)
+	for (searchIdx = 1; searchIdx <= 6; searchIdx++)
 	{
-		// todo: should also do a "isReachable" check probably...
-		if (VDistSquared(Location, Target.Location) < maxWeaponDistance*maxWeaponDistance && FiredWeapon(Target.HandHeldEquipment) != None && Target.CanBeUsedNow())
-			return Target;
- 	}
+		ForEach DynamicActors(class'HandheldEquipmentModel', Target)
+		{
+			// todo: should also do a "isReachable" check probably...
+			if (VDistSquared(Location, Target.Location) < ((searchIdx*maxWeaponDistance)*(searchIdx*maxWeaponDistance)) && FiredWeapon(Target.HandHeldEquipment) != None && Target.CanBeUsedNow())
+				return Target;
+		}
+	}
 
 	return None;
 }
