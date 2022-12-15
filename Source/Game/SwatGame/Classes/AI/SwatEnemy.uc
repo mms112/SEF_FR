@@ -253,6 +253,8 @@ function InitializeFromSpawner(Spawner Spawner)
     //remember the spawner that I was spawned from
     AIData = new(None) class'SwatGame.SwatAIData';
     AIData.SpawnedFrom = EnemySpawner;
+	AIData.DOATimer = new class'Timer';
+	AIData.DOATimer.TimerDelegate = DoDOAConversion;
 
     InitializePatrolling(EnemySpawner.EnemyPatrol);
 }
@@ -300,6 +302,28 @@ private function InitializeWeapons(EnemyArchetypeInstance Instance)
     {
         PrimaryWeapon.Equip();
     }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// DOA conversion
+
+function DoDOAConversion()
+{
+	log("[DOA Conversions] At time "$Level.TimeSeconds$", "$self$" went DOA");
+	TakeDamage(100000, None, vect(0,0,0), vect(0,0,0), class'DamageType');
+}
+
+function bool DOATimerRunning()
+{
+	if (IsDead()) return false;
+	return AIData.DOATimer.isRunning();
+}
+
+function DoFirstAid()
+{
+	AIData.DOATimer.TimerDelegate = None;
+    AIData.DOATimer.StopTimer();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -560,6 +584,11 @@ function NotifyHit(float Damage, Pawn HitInstigator)
 		{
 			SwatEnemy(HitInstigator).GetEnemyCommanderAction().NotifyEnemyShotByEnemy(self, Damage, EnemyInstigator);
 		}
+	}
+	
+	if (IsIncapacitated() && !IsDead())
+	{
+		AIData.DOATimer.StartTimer(Health * 15.0, false, true);
 	}
 }
 // enemies drop their weapons before they ragdoll

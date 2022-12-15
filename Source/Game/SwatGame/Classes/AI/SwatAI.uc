@@ -2441,9 +2441,6 @@ simulated function PostTakeDamage(int Damage, Pawn instigatedBy, Vector hitlocat
 {
 //	log("PostTakeDamage on " $ Name $ " Damage: " $ Damage $ " InstigatedBy: " $ InstigatedBy);
 
-	// notify subclasses that we've been hit
-	NotifyHit(Damage, InstigatedBy);
-
 	Super.PostTakeDamage(Damage, InstigatedBy, HitLocation, Momentum, damageType);
 
 	// become incapacitated if we should
@@ -2451,6 +2448,9 @@ simulated function PostTakeDamage(int Damage, Pawn instigatedBy, Vector hitlocat
 	{
 		BecomeIncapacitated(,instigatedBy,damageType);
 	}
+	
+	// notify subclasses that we've been hit
+	NotifyHit(Damage, InstigatedBy);
 }
 
 function NotifyHit(float Damage, Pawn HitInstigator);

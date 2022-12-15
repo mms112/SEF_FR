@@ -473,6 +473,7 @@ simulated native event bool IsLowerBodyInjured();
 
 simulated function bool CanBeHealed()
 {
+	if (self.isa('SwatEnemy') && SwatEnemy(self).DOATimerRunning()) return true;
 	if (self.isa('SwatHostage') && SwatHostage(self).DOATimerRunning()) return true;
     return isConscious() &&  ( Health  < 100 ) && 
 	( self.isa('SwatPlayer') || self.isa('SwatOfficer') );

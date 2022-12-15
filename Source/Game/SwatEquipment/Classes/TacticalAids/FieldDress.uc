@@ -128,6 +128,7 @@ simulated function UsedHook()
     local SwatPlayer SP;
     local SwatPawn SAI;
 	local SwatHostage SH;
+	local SwatEnemy SE;
 
     log( self$"---FieldDress::UsedHook(). Other="$Other$", Owner="$ Owner $ " GetAvailableCount() " $GetAvailableCount());
 
@@ -137,6 +138,7 @@ simulated function UsedHook()
     //heal other human players or your own
     SP=SwatPlayer(Pawn(Other));
 	SH = SwatHostage(Pawn(Other));
+	SE = SwatEnemy(Pawn(Other));
 
     if (SP != None && SP.isa('SwatPlayer') )
     {
@@ -155,6 +157,10 @@ simulated function UsedHook()
 	else if (SH != None && SH.isa('SwatHostage'))
 	{
 		SH.DoFirstAid();
+	}
+	else if (SE != None && SE.isa('SwatEnemy'))
+	{
+		SE.DoFirstAid();
 	}
     else  //heal AI
     {

@@ -3129,7 +3129,8 @@ function bool ContextMatches(SwatPlayer Player, Actor Target, PlayerInterfaceCon
 	if(CommandContext.CanBeHealedNow)
 	{
 		return ( (( Target.isa('SwatOfficer') || Target.isa('SwatPlayer') ) && Pawn(Target).Health  < 100 ) ||
-				 (Target.isa('SwatHostage') && SwatHostage(Target).DOATimerRunning()));
+				 (Target.isa('SwatHostage') && SwatHostage(Target).DOATimerRunning()) ||
+				 (Target.isa('SwatEnemy') && SwatEnemy(Target).DOATimerRunning()));
 	}
 
 	if(CommandContext.CaresAboutCanBeReportedNow)

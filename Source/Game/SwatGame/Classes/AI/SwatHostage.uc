@@ -181,6 +181,7 @@ function OnReportableReportedToTOC(IAmReportableCharacter ReportedCharacter, Paw
 
 function bool DOATimerRunning()
 {
+	if (IsDead()) return false;
 	return AIData.DOATimer.isRunning();
 }
 
@@ -221,6 +222,11 @@ function NotifyBecameIncapacitated(Pawn Incapacitator)
 	// notify the commander of the incapacitation
 	if (Incapacitator != None)
 		NotifyNearbyHostagesOfIncap();
+		
+	if (!DOATimerRunning() && !IsDead())
+	{
+		AIData.DOATimer.StartTimer(Health * 15.0, false);
+	}
 
 }
 simulated function NotifyNearbyHostagesOfIncap()
