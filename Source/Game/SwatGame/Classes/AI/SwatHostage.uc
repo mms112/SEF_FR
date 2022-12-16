@@ -223,7 +223,7 @@ function NotifyBecameIncapacitated(Pawn Incapacitator)
 	if (Incapacitator != None)
 		NotifyNearbyHostagesOfIncap();
 		
-	if (!DOATimerRunning() && !IsDead())
+	if (!DOATimerRunning() && !IsDead() && !bSpawnedAsIncapacitated)
 	{
 		AIData.DOATimer.StartTimer(Health * 15.0, false);
 	}

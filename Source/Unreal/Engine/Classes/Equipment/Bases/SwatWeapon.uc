@@ -472,8 +472,8 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
 		// Reduce the bullet's momentum by drag
 		if (BulletType == 45)
 		{
-			Ammo.BallisticsLog("Using Buckshot drag: "$3.5*Ammo.GetDrag());
-			Momentum -= 3.5 * Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
+			Ammo.BallisticsLog("Using Buckshot drag: "$2.5*Ammo.GetDrag());
+			Momentum -= 2.5 * Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
 		}
 		else if (BulletType == 46)
 		{
