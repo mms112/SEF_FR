@@ -545,7 +545,7 @@ simulated function bool HandleBallisticImpact(
     local float MomentumLostToVictim;
     local vector MomentumVector;
     local bool PenetratesVictim;
-    local int Damage;
+    local float Damage;
     local float KillChance;
 	local float RandomChance;
     local float ActualVelocity;
@@ -701,18 +701,18 @@ simulated function bool HandleBallisticImpact(
 	else
 	{
 		if (Victim.isa('SwatPawn') || Victim.isa('SwatPlayer') )
-			 Damage +=  ( Ammo.InternalDamage /2 );
+			 Damage +=  ( float(Ammo.InternalDamage) / 2.0 );
 	}
 
     //apply any external damage modifiers (maintained by the Repo)
     ExternalDamageModifier = Level.GetRepo().GetExternalDamageModifier( Owner, Victim );
-    Damage = int( float(Damage) * ExternalDamageModifier );
+    Damage *= ExternalDamageModifier;
 
 	// damage pawns
     PawnVictim = Pawn(Victim);
-    if (Damage <= 0 && SkeletalRegionInformation != None && PawnVictim != None)
+    if (int(Damage) <= 0 && SkeletalRegionInformation != None && PawnVictim != None)
 	{
-		Damage = 0;
+		Damage = 0.0;
     }
     if(SkeletalRegionInformation != None && PawnVictim != None && bUsesBullets)
     {
@@ -871,7 +871,7 @@ simulated function bool HandleBallisticImpact(
         WoundChance = 600;
 
 		//Reset damage First
-		Damage = 0;
+		Damage = 0.0;
 
 		OriginalKillEnergy = KillEnergy;
 
@@ -889,17 +889,17 @@ simulated function bool HandleBallisticImpact(
 			}
 			if (RandomChance < KillChance)
 			{
-					Damage += 15;
+					Damage += 15.0;
 					log( "Victim is wounded. Adding 15 damage points. Actual Damage points are " $ Damage );
 			}
 			else
 			{
-					Damage += 5;
+					Damage += 5.0;
 					log( "Victim is not wounded. Adding 5 damage point. Actual Damage points are " $ Damage );
 			}
 			KillEnergy = KillEnergy - WoundChance;
 		}
-			until( KillEnergy <= 0 || RandomChance > KillChance || Damage > 150);
+			until( KillEnergy <= 0 || RandomChance > KillChance || Damage > 150.0);
 			log( "Stopping, RandomChance is higher than kill chance");
 			log( "We need to restore the kill energy");
 			log("IMPACT: KillEnergy before calculating penetration: "$OriginalKillEnergy);
@@ -916,12 +916,12 @@ simulated function bool HandleBallisticImpact(
 			log( "KillEnergy now is " $ KillEnergy );
 			if (StartingKillEnergy <= 0)
 			{
-					Damage = 0;
+					Damage = 0.0;
 					log( "This was pointless because Originally our Kill Energy was 0 or less." );
 			}
 			log( "Final damage is " $ Damage );
     }
-    if( Damage > 0 && SkeletalRegionInformation != None && PawnVictim != None)
+    if( int(Damage) > 0 && SkeletalRegionInformation != None && PawnVictim != None)
     {
 		// dbeswick: stats
 		OwnerPC = PlayerController(Pawn(Owner).Controller);
@@ -947,7 +947,7 @@ simulated function bool HandleBallisticImpact(
     //don't play hit effects on the sky
     if (HitMaterial == None || HitMaterial.MaterialVisualType != MVT_Sky)
     {
-        if (Damage <= 0)
+        if (int(Damage) <= 0)
             Ammo.AddContextForNextEffectEvent('NoDamage');
         Ammo.TriggerEffectEvent('BulletHit', Victim, HitMaterial);
     }
@@ -987,30 +987,32 @@ simulated function bool HandleBallisticImpact(
             $".");
 
         if (PenetratesVictim)
-            Ammo.BallisticsLog("  ... Victim was penetrated:          Damage = MomentumLostToVictim * MomentumToDamageConversionFactor * DamageModifier * ExternalDamageModifier = "$MomentumLostToVictim
+            Ammo.BallisticsLog("  ... Victim was penetrated:          Damage = ((MomentumLostToVictim * MomentumToDamageConversionFactor) + InternalDamage/2) * DamageModifier * ExternalDamageModifier = (("$MomentumLostToVictim
                 $" * "$Level.GetRepo().MomentumToDamageConversionFactor
-                $" * "$DamageModifier
+				$") + "$float(Ammo.InternalDamage)/2.0
+                $") * "$DamageModifier
                 $" * "$ExternalDamageModifier
-                $" = "$Damage);
+                $" = "$int(Damage));
         else
             Ammo.BallisticsLog("  ... Bullet was buried in Victim:    Damage = ((MomentumLostToVictim * MomentumToDamageConversionFactor) + InternalDamage) * DamageModifier * ExternalDamageModifier = (("$MomentumLostToVictim
                 $" * "$Level.GetRepo().MomentumToDamageConversionFactor
                 $") + "$Ammo.InternalDamage
                 $") * "$DamageModifier
                 $" * "$ExternalDamageModifier
-                $" = "$Damage);
+                $" = "$int(Damage));
     }
     else
     {
         if (PenetratesVictim)
-            Ammo.BallisticsLog("  ... Victim was penetrated:          Damage = MomentumLostToVictim * MomentumToDamageConversionFactor = "$MomentumLostToVictim
+            Ammo.BallisticsLog("  ... Victim was penetrated:          Damage = (MomentumLostToVictim * MomentumToDamageConversionFactor) + InternalDamage/2 = ("$MomentumLostToVictim
                 $" * "$Level.GetRepo().MomentumToDamageConversionFactor
-                $" = "$Damage);
+				$") + "$float(Ammo.InternalDamage)/2.0
+                $" = "$int(Damage));
         else
             Ammo.BallisticsLog("  ... Bullet was buried in Victim:    Damage = (MomentumLostToVictim * MomentumToDamageConversionFactor) + InternalDamage = ("$MomentumLostToVictim
                 $" * "$Level.GetRepo().MomentumToDamageConversionFactor
                 $") + "$Ammo.InternalDamage
-                $" = "$Damage);
+                $" = "$int(Damage));
     }
 
     // If it's something with skeletal regions, do notification
@@ -1018,9 +1020,9 @@ simulated function bool HandleBallisticImpact(
     // every time bsp or a static mesh is hit
     SkelVictim = IHaveSkeletalRegions(Victim);
     if (SkelVictim != None)
-        SkelVictim.OnSkeletalRegionHit(HitRegion, HitLocation, HitNormal, Damage, GetDamageType(), Owner);
+        SkelVictim.OnSkeletalRegionHit(HitRegion, HitLocation, HitNormal, int(Damage), GetDamageType(), Owner);
 
-    DealDamage(Victim, Damage, Pawn(Owner), HitLocation, MomentumVector, GetDamageType());
+    DealDamage(Victim, int(Damage), Pawn(Owner), HitLocation, MomentumVector, GetDamageType());
 
     Ammo.BallisticsLog("  ... Bullet will impart to victim the momentum it lost to the victim:  "$VSize(MomentumVector)$" in direction "$Normal(MomentumVector));
 
@@ -1039,8 +1041,8 @@ simulated function bool HandleBallisticImpact(
         Ammo.TriggerEffectEvent('BulletExited', Victim, ExitMaterial);
     }
 
-    if ( ShouldSpawnBloodForVictim( PawnVictim, Damage ) )
-        SpawnBloodEffects( Ammo, ExitLocation, Damage, NormalizedBulletDirection );
+    if ( ShouldSpawnBloodForVictim( PawnVictim, int(Damage) ) )
+        SpawnBloodEffects( Ammo, ExitLocation, int(Damage), NormalizedBulletDirection );
 #endif // IG_EFFECTS
     return PenetratesVictim;
 }
@@ -1062,7 +1064,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 {
     local bool PenetratesProtection;
     local vector MomentumVector;
-    local int Damage;
+    local float Damage;
     local float ActualVelocity;
     local float VelocityRatio;
     local float OriginalKillEnergy;
@@ -1093,7 +1095,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     MomentumLostToProtection = FMin(Momentum, Protection.GetMtP());
     Damage = MomentumLostToProtection * Level.GetRepo().MomentumToDamageConversionFactor;
 
-	if(Damage > 0 && bUsesBullets)
+	if(int(Damage) > 0 && bUsesBullets)
 		{
 		if (HitRegion == REGION_Head)
 			{
@@ -1250,7 +1252,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 				}
 			}
 		//Reset damage First
-		Damage = 0;
+		Damage = 0.0;
 		OriginalKillEnergy = KillEnergy;
 
 		log( "Initiating damage system" );
@@ -1267,12 +1269,12 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 			}
 			if (RandomChance < KillChance)
 			{
-					Damage += 10;
+					Damage += 10.0;
 					log( "Victim is wounded. Adding 10 damage points. Actual Damage points are " $ Damage );
 			}
 			else
 			{
-					Damage += 4;
+					Damage += 4.0;
 					log( "Victim is not wounded. Adding 4 damage point. Actual Damage points are " $ Damage );
 			}
 			KillEnergy = KillEnergy - WoundChance;
@@ -1291,7 +1293,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 			log( "KillEnergy now is " $ KillEnergy );
 			if (StartingKillEnergy <= 0)
 			{
-					Damage = 0;
+					Damage = 0.0;
 					log( "This was pointless because Originally our Kill Energy was 0 or less." );
 			}
 			log( "Final damage is " $ Damage );
@@ -1305,7 +1307,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 
     //apply any external damage modifiers (maintained by the Repo)
     ExternalDamageModifier = Level.GetRepo().GetExternalDamageModifier( Owner, Victim );
-    Damage = int( float(Damage) * ExternalDamageModifier );
+    Damage *= ExternalDamageModifier;
 
     //calculate momentum vector imparted to victim
     MomentumVector = NormalizedBulletDirection * Protection.GetMtP();
@@ -1331,7 +1333,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
         $" * "$Level.GetRepo().MomentumToDamageConversionFactor
         $" * "$DamageModifier
         $" * "$ExternalDamageModifier
-        $" = "$Damage);
+        $" = "$int(Damage));
 		
 	//the bullet has lost momentum to its target
     Momentum -= Protection.GetMtP();
@@ -1339,9 +1341,9 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 	if(Ammo.CanShredArmor()) {
       Protection.OnProtectedRegionHit();
 
-    IHaveSkeletalRegions(Victim).OnSkeletalRegionHit(HitRegion, HitLocation, HitNormal, Damage, GetDamageType(), Owner);
+    IHaveSkeletalRegions(Victim).OnSkeletalRegionHit(HitRegion, HitLocation, HitNormal, int(Damage), GetDamageType(), Owner);
 
-    DealDamage(Victim, Damage, Pawn(Owner), HitLocation, MomentumVector, GetDamageType());
+    DealDamage(Victim, int(Damage), Pawn(Owner), HitLocation, MomentumVector, GetDamageType());
 
     
     }
