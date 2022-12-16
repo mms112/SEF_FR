@@ -1476,6 +1476,7 @@ simulated function bool IsIntenseInjury()
 simulated function HealIntenseInjury()
 {
     Health =  100; //just out of the threshold for heal the limp
+	AccumulatedLimbInjury = 0;
 }
 
 // overridden from Pawn.uc

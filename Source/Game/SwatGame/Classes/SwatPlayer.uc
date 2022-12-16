@@ -4072,16 +4072,33 @@ simulated final function HealLimping()
 {
 	if (IsLowerBodyInjured())
 	{
-		CurrentLimp = class'SwatPlayerConfig'.static.GetLimpThreshold() - 0.001;
+		CurrentLimp = class'SwatPlayerConfig'.static.GetLimpThreshold() - 1.0;
 	}
 	
 	Health += 30;
+	
+	if (AccumulatedLimbInjury >= 3.0)
+	{
+		AccumulatedLimbInjury -= 1.0;
+	}
+	else
+	{
+		if (AccumulatedLimbInjury > 2.0)
+		{
+			AccumulatedLimbInjury = 2.0;
+		}
+	}
 	
 	if (Health >= 100)
 	{
 		Health = 100;
 		ArmInjuryFlags = 0; 
 		SwatGamePlayerController(Controller).GetHUDPage().DamageIndicator.ClearDamage();
+		
+		if (AccumulatedLimbInjury > 2.0)
+		{
+			AccumulatedLimbInjury = 2.0;
+		}
 	}
 }
 
