@@ -152,7 +152,7 @@ function Spawner GetSpawner()
 function DoDOAConversion()
 {
   log("[DOA Conversions] At time "$Level.TimeSeconds$", "$self$" went DOA");
-  AIData.TreatAsDOA = true;
+  if (bSpawnedAsIncapacitated) AIData.TreatAsDOA = true;
   log("[DOA Conversions] TreatAsDOA is now "$AIData.TreatAsDOA);
   TakeDamage(100000, None, vect(0,0,0), vect(0,0,0), class'DamageType');
 }
