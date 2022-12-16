@@ -700,8 +700,7 @@ simulated function bool HandleBallisticImpact(
         Damage += Ammo.InternalDamage;
 	else
 	{
-		if ((Victim.isa('SwatPawn') || Victim.isa('SwatPlayer') ) &&
-			(BulletType != 41))
+		if (Victim.isa('SwatPawn') || Victim.isa('SwatPlayer') )
 			 Damage +=  ( Ammo.InternalDamage /2 );
 	}
 
