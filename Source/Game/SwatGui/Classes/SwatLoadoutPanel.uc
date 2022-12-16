@@ -451,7 +451,7 @@ function ChangeLoadOut( Pocket thePocket )
       theItem = class<actor>(MyWeaponBox.GetObject());
       theWeapon = class<SwatWeapon>(theItem);
 
-      if(theWeapon != None && theWeapon.default.SelectableVariants.length > 0) {
+      if((theWeapon != None) && (theWeapon.default.SelectableVariants.length > 0) && (theWeapon.default.SelectableVariants[0].VariantClass != None)) {
         // More than one selectable variant = use the attachment
         theWeaponAttachment = class<SwatWeapon>(MyWeaponAttachmentBox.GetObject());
         if(theWeaponAttachment != None) {
@@ -1025,7 +1025,7 @@ protected function RepopulateAmmoInformationForNewWeapon(class<SwatWeapon> TheNe
     //log('clearing attachments');
     MyWeaponAttachmentBox.List.Clear();
 
-    if(TheNewWeapon.default.SelectableVariants.length > 0) {
+    if((TheNewWeapon.default.SelectableVariants.length > 0) && (TheNewWeapon.default.SelectableVariants[0].VariantClass != None)) {
       // Show the variant selection and set variant to 0
       MyWeaponAttachmentBox.SetVisibility(true);
       MyWeaponAttachmentLabel.SetVisibility(true);
