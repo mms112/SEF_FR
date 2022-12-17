@@ -588,7 +588,7 @@ function NotifyHit(float Damage, Pawn HitInstigator)
 	
 	if (IsIncapacitated() && !IsDead())
 	{
-		AIData.DOATimer.StartTimer(Health * 15.0, false, true);
+		AIData.DOATimer.StartTimer((Health + 1) * 15.0, false, true);
 	}
 }
 // enemies drop their weapons before they ragdoll
