@@ -1486,7 +1486,7 @@ function NotifyDoorWedged(Door WedgedDoor)
 	SD=ISwatDoor(WedgedDoor);
 
 	//let the enemy remove wedges if they are high skill
-    if( ISwatEnemy(m_Pawn).GetEnemySkill() == EnemySkill_High  && ( FRand() > 0.65 ) ) //  EnemySkill_High with 35% chance       
+    if( ISwatEnemy(m_Pawn).GetEnemySkill() == EnemySkill_High  && ( FRand() > 0.5 ) ) //  EnemySkill_High with 50% chance       
     {    
 	   
 		for (C = Level.ControllerList; C != none && !DoRemoveWedge ; C = C.nextController)

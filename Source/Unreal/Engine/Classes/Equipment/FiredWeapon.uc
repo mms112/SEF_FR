@@ -596,8 +596,8 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
       // Reduce the bullet's momentum by drag
 	  if (BulletType == 45)
 	  {
-	    Ammo.BallisticsLog("Using Buckshot drag: "$2.5*Ammo.GetDrag());
-		Momentum -= 2.5 * Ammo.GetDrag() * VSize(NewHitLocation - PreviousExitLocation);
+	    Ammo.BallisticsLog("Using Buckshot drag: "$3.0*Ammo.GetDrag());
+		Momentum -= 3.0 * Ammo.GetDrag() * VSize(NewHitLocation - PreviousExitLocation);
 	  }
 	  else if (BulletType == 46)
 	  {
@@ -685,8 +685,8 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
 		// Reduce the bullet's momentum by drag
 		if (BulletType == 45)
 		{
-			Ammo.BallisticsLog("Using Buckshot drag: "$2.5*Ammo.GetDrag());
-			Momentum -= 2.5 * Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
+			Ammo.BallisticsLog("Using Buckshot drag: "$3.0*Ammo.GetDrag());
+			Momentum -= 3.0 * Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
 		}
 		else if (BulletType == 46)
 		{

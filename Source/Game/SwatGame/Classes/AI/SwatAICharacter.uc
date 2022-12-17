@@ -723,16 +723,17 @@ private function ApplyDazedEffect(SwatProjectile Grenade, Vector SourceLocation,
 
 private function DirectHitByGrenade(Pawn Instigator, float Damage, float AIStingDuration, class<DamageType> DamageType)
 {
+	if (Damage > 0.0)
+	{
+		TakeDamage(Damage, Instigator, Location, vect(0.0, 0.0, 0.0), DamageType);
+	}
+
 	if ( CantBeDazed() )
         return;
-
-	if (Damage > 0.0) {
-		TakeDamage(Damage, Instigator, Location, vect(0.0, 0.0, 0.0), DamageType);
-  }
-
-  // Don't apply the dazed effect if the previous strike killed us and we were a threat
-  if(Health > GetIncapacitatedDamageAmount() || !IsAThreat())
-	 ApplyDazedEffect(None, Location, AIStingDuration);
+		
+	// Don't apply the dazed effect if the previous strike killed us and we were a threat
+	if(Health > GetIncapacitatedDamageAmount() || !IsAThreat())
+		ApplyDazedEffect(None, Location, AIStingDuration);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -749,9 +750,6 @@ function ReactToLessLeathalShotgun(
     float AIStingDuration,
 	class<DamageType> DamageType)
 {
-    if ( CantBeDazed() )
-        return;
-
         if (Damage > 0.0)
         {
             // event Actor::TakeDamage()
@@ -761,6 +759,9 @@ function ReactToLessLeathalShotgun(
                         MomentumVector,                          // vector Momentum
                         DamageType );
         }
+		
+	if ( CantBeDazed() )
+        return;
 
   // Don't apply the dazed effect if the previous strike killed us and we were a threat
   if(Health > GetIncapacitatedDamageAmount() || !IsAThreat())
@@ -802,13 +803,13 @@ function ReactToMeleeAttack(
 	float NonArmoredPlayerStingDuration,
     float AIStingDuration)
 {
-    if ( CantBeDazed() )
-        return;
-
 	// Only apply damage if the damage wont kill the target. You can't kill someone with the melee attack.
     if (Damage > 0.0 && Damage < Health) {
         TakeDamage(Damage, Instigator, Location, vect(0.0, 0.0, 0.0), MeleeDamageType);
     }
+	
+	if ( CantBeDazed() )
+        return;
 
   // Don't apply the dazed effect if we are a threat and we got incapacitated
   if(Health > IncapacitatedHealthAmount || !IsAThreat())
@@ -841,56 +842,56 @@ function ReactToFlashbangGrenade(
         return;
     }
 
+	if (Grenade != None)
+	{
+		GrenadeLocation = Grenade.Location;
+		Direction       = Location - Grenade.Location;
+		Distance        = VSize(Direction);
+		DistanceEffect = ((StunRadius + (StunRadius/4)) - Distance)/(StunRadius);
+		AIStunDuration *= DistanceEffect;
+		if (Instigator == None)
+			Instigator = Pawn(Grenade.Owner);
+	}
+	else
+	{
+		// Handle cheat commands and unexpecteed pathological cases
+		GrenadeLocation = Location;
+		Distance = 0;
+		DistanceEffect = 1;
+		AIStunDuration *= DistanceEffect;
+		if (Instigator != None)
+			Direction = Location - Instigator.Location;
+		else
+			Direction = Location; // just for completeness, this should never
+								  // be reached in practice, except for during debug testing
+	}
+
+	//damage - Damage should be applied constantly over DamageRadius
+	if (Distance <= DamageRadius)
+	{
+		//event Actor::
+		//  TakeDamage(int Damage,  Pawn EventInstigator,   vector HitLocation, vector Momentum,    class<DamageType> DamageType    );
+			TakeDamage(Damage,      Instigator,				GrenadeLocation,    vect(0,0,0),        class'Engine.GrenadeDamageType' );
+	}
+
+	//apply karma impulse to ragdolls
+	if (!isConscious())
+	{
+		//karma impulse - Karma impulse should be applied linearly from KarmaImpulse.Max to KarmaImpulse.Min over KarmaImpulseRadius
+		if (Distance <= KarmaImpulseRadius)
+		{
+			Magnitude = Lerp(Distance / KarmaImpulseRadius, KarmaImpulse.Max, KarmaImpulse.Min);
+
+			//native final function Actor::
+			//  KAddImpulse(vector Impulse, vector Position, optional name BoneName );
+#if WITH_KARMA
+				KAddImpulse(Direction, Normal(Direction) * Magnitude);
+#endif
+		}
+	}
+	
 	if (IsConscious())
 	{
-		if (Grenade != None)
-		{
-			GrenadeLocation = Grenade.Location;
-			Direction       = Location - Grenade.Location;
-			Distance        = VSize(Direction);
-			DistanceEffect = ((StunRadius + (StunRadius/4)) - Distance)/(StunRadius);
-			AIStunDuration *= DistanceEffect;
-			if (Instigator == None)
-				Instigator = Pawn(Grenade.Owner);
-		}
-		else
-		{
-			// Handle cheat commands and unexpecteed pathological cases
-			GrenadeLocation = Location;
-			Distance = 0;
-			DistanceEffect = 1;
-			AIStunDuration *= DistanceEffect;
-			if (Instigator != None)
-				Direction = Location - Instigator.Location;
-			else
-				Direction = Location; // just for completeness, this should never
-			                          // be reached in practice, except for during debug testing
-		}
-
-		//damage - Damage should be applied constantly over DamageRadius
-		if (Distance <= DamageRadius)
-		{
-			//event Actor::
-			//  TakeDamage(int Damage,  Pawn EventInstigator,   vector HitLocation, vector Momentum,    class<DamageType> DamageType    );
-				TakeDamage(Damage,      Instigator,				GrenadeLocation,    vect(0,0,0),        class'Engine.GrenadeDamageType' );
-		}
-
-		//apply karma impulse to ragdolls
-		if (!isConscious())
-		{
-			//karma impulse - Karma impulse should be applied linearly from KarmaImpulse.Max to KarmaImpulse.Min over KarmaImpulseRadius
-			if (Distance <= KarmaImpulseRadius)
-			{
-				Magnitude = Lerp(Distance / KarmaImpulseRadius, KarmaImpulse.Max, KarmaImpulse.Min);
-
-				//native final function Actor::
-				//  KAddImpulse(vector Impulse, vector Position, optional name BoneName );
-#if WITH_KARMA
-					KAddImpulse(Direction, Normal(Direction) * Magnitude);
-#endif
-			}
-		}
-
 		if (Distance <= StunRadius)
 		{
 			assert(AIStunDuration > 0.0);
@@ -957,7 +958,7 @@ function ReactToStingGrenade(
     local float Distance;
     local float DistanceEffect;
 
-    if ( Grenade == None || CantBeDazed() )
+    if ( Grenade == None )
         return;
 
 	Distance = VSize(Location - Grenade.Location);
@@ -971,6 +972,8 @@ function ReactToStingGrenade(
 
 		TakeDamage(Damage, Instigator, Grenade.Location, vect(0.0, 0.0, 0.0), class'Engine.GrenadeDamageType');
 	}
+	
+	if (CantBeDazed()) return;
 
 	if ( Distance <= StingRadius )
 	{
