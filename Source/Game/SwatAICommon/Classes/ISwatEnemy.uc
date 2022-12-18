@@ -23,8 +23,7 @@ enum EnemyState
 {
     EnemyState_Unaware,
     EnemyState_Suspicious,
-    EnemyState_Aware,
-	EnemyState_Flee
+    EnemyState_Aware
 };
 
 ///////////////////////////////////////////////////////////////////////////////

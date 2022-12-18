@@ -417,7 +417,11 @@ state Running
 
 	if (ISwatAI(m_Pawn).ShouldPlayFullBodyHitAnimation())
 	{
-		useResources(class'AI_Resource'.const.RU_LEGS | class'AI_Resource'.const.RU_ARMS);
+		//Do not abort a threaten hostage action
+		if (!m_Pawn.IsA('SwatEnemy') || !ISwatEnemy(m_Pawn).GetEnemyCommanderAction().IsThreateningHostage())
+		{
+			useResources(class'AI_Resource'.const.RU_LEGS | class'AI_Resource'.const.RU_ARMS);
+		}
 
 		PlayHitAnimation();
 	}

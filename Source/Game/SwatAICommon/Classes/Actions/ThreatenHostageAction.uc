@@ -99,6 +99,21 @@ function OnSensorMessage( AI_Sensor sensor, AI_SensorData value, Object userData
 		if (CurrentAimAtTargetGoal != None)
 		{
 			bHurryUpAndKillHostage = true;
+			
+			if (CurrentAimAtTargetGoal != None)
+			{
+				CurrentAimAtTargetGoal.unPostGoal(self);
+				CurrentAimAtTargetGoal.Release();
+				CurrentAimAtTargetGoal = None;
+			}
+			
+			if (CurrentAttackTargetGoal == None)
+			{
+				CurrentAttackTargetGoal = new class'AttackTargetGoal'(weaponResource(), Hostage);
+				assert(CurrentAttackTargetGoal != None);
+				CurrentAttackTargetGoal.AddRef();
+				CurrentAttackTargetGoal.postGoal(self);
+			}
 		}
 		else
 		{
@@ -107,6 +122,27 @@ function OnSensorMessage( AI_Sensor sensor, AI_SensorData value, Object userData
 
 			instantFail(ACT_TOO_CLOSE_TO_OFFICERS);
 		}
+	}
+}
+
+function NotifyTookHit()
+{
+	log("Hurry up due to hit");
+	bHurryUpAndKillHostage = true;
+	
+	if (CurrentAimAtTargetGoal != None)
+	{
+		CurrentAimAtTargetGoal.unPostGoal(self);
+		CurrentAimAtTargetGoal.Release();
+		CurrentAimAtTargetGoal = None;
+	}
+	
+	if (CurrentAttackTargetGoal == None)
+	{
+		CurrentAttackTargetGoal = new class'AttackTargetGoal'(weaponResource(), Hostage);
+		assert(CurrentAttackTargetGoal != None);
+		CurrentAttackTargetGoal.AddRef();
+		CurrentAttackTargetGoal.postGoal(self);
 	}
 }
 
@@ -281,7 +317,7 @@ function bool CanAimAtHostage()
 
 	CurrentWeapon = FiredWeapon(m_Pawn.GetActiveItem());
 
-	if(!CurrentWeapon.HitsTargetWithNoInterruptions(Hostage))
+	if(!CurrentWeapon.HitsTargetWithNoInterruptions(Hostage) && !bHurryUpAndKillHostage)
 	{	// We can't aim at them because our trace failed
 		return false;
 	}
@@ -350,12 +386,16 @@ latent function AimAtHostage()
 
 latent function ShootHostage()
 {
-    CurrentAttackTargetGoal = new class'AttackTargetGoal'(weaponResource(), Hostage);
-    assert(CurrentAttackTargetGoal != None);
-	CurrentAttackTargetGoal.AddRef();
+	if (CurrentAttackTargetGoal == None)
+	{
+		CurrentAttackTargetGoal = new class'AttackTargetGoal'(weaponResource(), Hostage);
+		assert(CurrentAttackTargetGoal != None);
+		CurrentAttackTargetGoal.AddRef();
+		CurrentAttackTargetGoal.postGoal(self);
+	}
 
     // post the move to goal
-    waitForGoal(CurrentAttackTargetGoal.postGoal(self));
+    waitForGoal(CurrentAttackTargetGoal);
     CurrentAttackTargetGoal.unPostGoal(self);
 
 	CurrentAttackTargetGoal.Release();
@@ -460,9 +500,12 @@ state Running
 		WaitToKillHostage();
 
 	// remove the aim goal, cause we're going to shoot the hostage.
-	CurrentAimAtTargetGoal.unPostGoal(self);
-	CurrentAimAtTargetGoal.Release();
-	CurrentAimAtTargetGoal = None;
+	if (CurrentAimAtTargetGoal != None)
+	{
+		CurrentAimAtTargetGoal.unPostGoal(self);
+		CurrentAimAtTargetGoal.Release();
+		CurrentAimAtTargetGoal = None;
+	}
 
 	// shoot the hostage
 	while (class'Pawn'.static.checkConscious(Hostage))

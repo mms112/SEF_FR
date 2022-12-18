@@ -1152,7 +1152,7 @@ protected function bool IsRunningAway()
 	return false;
 }
 
-protected function bool IsThreateningHostage()
+function bool IsThreateningHostage()
 {
 	return ((CurrentEngageOfficerGoal != None) &&
 			(CurrentEngageOfficerGoal.achievingAction != None) &&
@@ -1266,6 +1266,11 @@ function NotifyTookHit()
 
 		if (isIdle())
 			runAction();
+	}
+	
+	if (IsThreateningHostage())
+	{
+		ThreatenHostageAction(CurrentEngageOfficerGoal.achievingAction).NotifyTookHit();
 	}
 }
 

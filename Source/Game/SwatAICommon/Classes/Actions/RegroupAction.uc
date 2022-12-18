@@ -356,8 +356,6 @@ latent function Regroup()
 {
     local NavigationPoint Destination;
 	local Pawn CurrentEnemy;
-	
-	ISwatEnemy(m_Pawn).SetCurrentState(EnemyState_Flee);
 
     Destination = FindRegroupDestination();
 

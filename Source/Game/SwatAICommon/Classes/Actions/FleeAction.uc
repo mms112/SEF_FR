@@ -371,8 +371,6 @@ latent function Flee()
 
 	ISwatEnemy(m_Pawn).UnbecomeAThreat(true, ThreatCooldown);
 	
-	ISwatEnemy(m_Pawn).SetCurrentState(EnemyState_Flee);
-	
 	// trigger the speech
 	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerFleeSpeech();
 

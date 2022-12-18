@@ -300,7 +300,7 @@ private function ReactToNearbyGunshot(Actor HeardActor)
 {
 	local NavigationPoint RunAwayDestination;
 
-	if (m_Pawn.IsCompliant() || m_Pawn.IsArrested())
+	if (m_Pawn.IsCompliant() || m_Pawn.IsArrested() || ThreatenedSensorAction(ThreatenedSensor.sensorAction).IsThreatened())
 	{
 		PlayFlinch();
 	}
