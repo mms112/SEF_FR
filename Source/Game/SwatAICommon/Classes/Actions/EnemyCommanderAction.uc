@@ -824,6 +824,8 @@ function OnHeardNoise()
 
 			EncounterEnemy(HeardPawn);
 		}
+		
+		ISwatEnemy(m_Pawn).OnHeardNoise();
 
 		if (SoundCategory == 'Footsteps')
 		{
@@ -1459,7 +1461,7 @@ function AttackEnemyWithWeapon(Actor Target)
 
 
 // removes either the Barricade or Investigate goal
-private function RemoveSuspiciousGoals()
+function RemoveSuspiciousGoals()
 {
 	if (CurrentBarricadeGoal != None)
 	{

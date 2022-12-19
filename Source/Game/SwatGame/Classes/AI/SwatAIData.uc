@@ -6,6 +6,8 @@ var public Spawner SpawnedFrom;
 var public Timer DOATimer;
 var public bool TreatAsDOA; // Treat this as a DOA and not as a killed character
 
+var public Timer HeardNoiseTimer;
+
 simulated function Destroyed()
 {
   // Put anything that needs to be garbage-collected here

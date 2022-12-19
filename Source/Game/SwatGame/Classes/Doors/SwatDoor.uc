@@ -611,6 +611,11 @@ simulated function bool CanInteract()
     return /*!IsBroken() &&*/ !IsWedged();
 }
 
+function SetLastInteractor(Pawn Other)
+{
+	LastInteractor = Other;
+}
+
 //pass Force=true to interact even with a locked door
 simulated function Interact(Pawn Other, optional bool Force)
 {

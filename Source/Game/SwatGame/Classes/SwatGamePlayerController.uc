@@ -3993,6 +3993,8 @@ exec function PullDoor()
     if (Door.IsClosed() && Door.IsLocked()) { CheckDoorLock(Door); return; }
     if (VSize2D(Door.Location - Pawn.Location) > 150) return;
 	
+	Door.SetLastInteractor(Pawn);
+	
     if(Door.GetPosition() == DoorPosition_Closed)
     {
 			if (Door.ActorIsToMyLeft(Pawn))
@@ -4022,6 +4024,8 @@ exec function PartialDoorPush()
     if (!Door.CanInteract()) return; 
     if (Door.IsClosed() && Door.IsLocked()) { CheckDoorLock(Door); return; }
     if (VSize2D(Door.Location - Pawn.Location) > 150) return;
+	
+	Door.SetLastInteractor(Pawn);
     
     if(Door.GetPosition() == DoorPosition_Closed)
     {
@@ -4068,6 +4072,8 @@ exec function PartialDoorPull()
     if (!Door.CanInteract()) return; 
     if (Door.IsClosed() && Door.IsLocked()) { CheckDoorLock(Door); return; }
     if (VSize2D(Door.Location - Pawn.Location) > 150) return;
+	
+	Door.SetLastInteractor(Pawn);
     
     if(Door.GetPosition() == DoorPosition_Closed)
     {

@@ -255,6 +255,8 @@ function InitializeFromSpawner(Spawner Spawner)
     AIData.SpawnedFrom = EnemySpawner;
 	AIData.DOATimer = new class'Timer';
 	AIData.DOATimer.TimerDelegate = DoDOAConversion;
+	AIData.HeardNoiseTimer = new class'Timer';
+	AIData.HeardNoiseTimer.TimerDelegate = BecomeUnaware;
 
     InitializePatrolling(EnemySpawner.EnemyPatrol);
 }
@@ -324,6 +326,21 @@ function DoFirstAid()
 {
 	AIData.DOATimer.TimerDelegate = None;
     AIData.DOATimer.StopTimer();
+}
+
+function OnHeardNoise()
+{
+	AIData.HeardNoiseTimer.StartTimer(300.0, false, true);
+}
+
+function BecomeUnaware()
+{
+	if (GetCurrentState() == EnemyState_Suspicious)
+	{
+		SetCurrentState(EnemyState_Unaware);
+		StartInvestigating();
+		GetEnemyCommanderAction().RemoveSuspiciousGoals();
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

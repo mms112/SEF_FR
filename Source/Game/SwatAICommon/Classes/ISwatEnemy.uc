@@ -58,6 +58,8 @@ function			BecomeAThreat();
 function UnbecomeAThreat(optional bool UseCooldown, optional float CooldownDuration);
 function bool ThreatTimerIsRunning();
 
+function OnHeardNoise();
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Weapon Usage
