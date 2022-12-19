@@ -42,7 +42,7 @@ defaultproperties
     staticmesh=StaticMesh'arms_sm.arms_bathsink'
     DrawScale=0.5
     bHidden=false
-    QualifyTime=1.0
+    QualifyTime=5.0
     bCollideActors=true
     bCollideWorld=true
     bBlockActors=true

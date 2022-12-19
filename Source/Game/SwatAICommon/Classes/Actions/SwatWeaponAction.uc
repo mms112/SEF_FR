@@ -295,8 +295,8 @@ latent function ShootWeaponAt(Actor Target)
 				if (FRand() < 0.5 ) //50% chance of meleeing
 				{
 					CurrentWeapon.Melee();
-					sleep(2.0); //wait for melee to finish
-					
+					sleep(1.0); //wait for melee to finish
+			
 					if (FRand() < 0.2 )
 						return; //80% chance to punch or punch AND fire
 					

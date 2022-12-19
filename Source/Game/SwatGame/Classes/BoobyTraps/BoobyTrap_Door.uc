@@ -16,7 +16,7 @@ defaultproperties
     DrawScale=0.5
     AttachSocket=C2ChargeLeft
     bHidden=false
-    QualifyTime=1.0
+    QualifyTime=5.0
     bCollideActors=true
     bCollideWorld=true
     bBlockActors=true
