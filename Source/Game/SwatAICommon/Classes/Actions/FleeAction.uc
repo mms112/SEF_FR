@@ -364,12 +364,15 @@ private function FleePoint FindFleePointDestination()
     return Destination;
 }
 
-latent function Flee()
+latent function Flee(bool UnbecomeThreat)
 {
 	local Pawn CurrentEnemy;
 	CurrentEnemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
 
-	ISwatEnemy(m_Pawn).UnbecomeAThreat(true, ThreatCooldown);
+	if (UnbecomeThreat)
+	{
+		ISwatEnemy(m_Pawn).UnbecomeAThreat(true, ThreatCooldown);
+	}
 	
 	// trigger the speech
 	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerFleeSpeech();
@@ -430,19 +433,20 @@ Begin:
     if (ShouldAttackWhileFleeing())
 	{
 		AttackWhileFleeing();
+		Flee(false);
 	}
 	else
 	{
 		// if we're not attacking while fleeing, use the full body flee (movement) animations
 		SwapInFullBodyFleeAnimations();
+		Flee(true);
 	}
-
-    Flee();
 
 	// let the commander know to clean up after this particular behavior
 	ISwatEnemy(m_Pawn).GetEnemyCommanderAction().FinishedMovingEngageBehavior();
 	ISwatEnemy(m_Pawn).GetEnemyCommanderAction().InterruptCurrentEngagement();
 	ISwatEnemy(m_Pawn).GetEnemyCommanderAction().FinishedEngagingEnemies();
+	ISwatEnemy(m_Pawn).UnbecomeAThreat(true, ThreatCooldown);
 
     succeed();
 }
