@@ -319,6 +319,11 @@ simulated function InterruptUsing()
 		// Stop playing any sounds from looping...
         SoundEffectsSubsystem(EffectsSystem(Level.EffectsSystem).GetSubsystem('SoundEffectsSubsystem')).StopMySchemas(Pawn(Owner).GetHands());
         Pawn(Owner).GetHands().PlayAnim(EndAnim);
+		if (bMirroring && (MirroringDoor != None))
+		{
+			MirroringDoor.SoundPropagationDistancePenalty = 700.0;
+			MirroringDoor.BroadcastUnTriggerEffectEvent('OptiHumLoop');
+		}
         //Disable('Tick');
     }
 }
@@ -388,6 +393,12 @@ simulated latent protected function DoUsingHook()
         }
     }
     //FirstPersonModel.SetBoneDirection(BoneName, DesiredViewRotation,,, 1);
+	
+	if (bMirroring && (MirroringDoor != None))
+	{
+		MirroringDoor.SoundPropagationDistancePenalty = 0.0;
+		MirroringDoor.SetLastInteractor(PawnOwner);
+	}
 
     mplog( Self$" DoUsingHook() Latent function 4" );
     // Hands
@@ -396,6 +407,11 @@ simulated latent protected function DoUsingHook()
         Hands.PlayAnim(UseAnim);
         Hands.FinishAnim();
     }
+	
+	if (bMirroring && (MirroringDoor != None))
+	{
+		MirroringDoor.BroadcastEffectEvent('OptiHumLoop');
+	}
 
     mplog( Self$" DoUsingHook() Latent function 5" );
     // Make sure the screen only starts rendering when going after we've played the animation to bring the optiwand screen up
@@ -433,6 +449,12 @@ simulated latent protected function DoUsingHook()
         Hands.PlayAnim(EndAnim);
         Hands.FinishAnim();
     }
+	
+	if (bMirroring && (MirroringDoor != None))
+	{
+		MirroringDoor.SoundPropagationDistancePenalty = 700.0;
+		MirroringDoor.BroadcastUnTriggerEffectEvent('OptiHumLoop');
+	}
 
 	LastBoneRotation = BoneRotation-Pawn(Owner).GetViewRotation();
 	if (bMirroring) {

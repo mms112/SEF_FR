@@ -389,7 +389,7 @@ function PenaltyTriggeredMessage(Pawn Inflictor, string PenaltyMessage)
 	if(Level.NetMode != NM_Standalone)
 	{
 		Message = SwatPawn(Inflictor).GetHumanReadableName()$"\t"$PenaltyMessage;
-		if (!ServerSettings(Level.CurrentServerSettings).HidePenaltyMessages)
+		//if (!ServerSettings(Level.CurrentServerSettings).HidePenaltyMessages)
 			Broadcast(Inflictor, Message, 'PenaltyIssuedChat');
 		if(Inflictor.IsA('NetPlayer'))
 		{

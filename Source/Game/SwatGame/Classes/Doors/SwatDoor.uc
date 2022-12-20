@@ -422,6 +422,15 @@ function Tick( float dTime )
             UpdateAttachmentLocations();
         }
     }
+	else if ( RemainingUpdateAttachmentLocationsCounter == 0 )
+	{
+		RemainingUpdateAttachmentLocationsCounter--;
+		
+		if (SoundPropagationDistancePenalty == 0.0)
+		{
+			SoundPropagationDistancePenalty = 700.0;
+		}
+	}
 }
 
 // A door roster locked this door
@@ -651,7 +660,9 @@ simulated function Interact(Pawn Other, optional bool Force)
 	// only block locked doors if they are closed (let them become closed again -- and stay locked)
     if (IsClosed() && bIsLocked && !Force)
     {
+		SoundPropagationDistancePenalty = 0.0;
         BroadcastEffectEvent('LockedDoorTried');
+		InitializeRemainingUpdateAttachmentLocationsCounter();
 
         if( Level.GetLocalPlayerController() != None )
             PlayerPawn = SwatPawn(Level.GetLocalPlayerController().Pawn);
@@ -765,7 +776,9 @@ simulated function OnUnlocked()
 
 	bIsLocked = false;
 
-    TriggerEffectEvent('Unlocked');
+	SoundPropagationDistancePenalty = 0.0;
+	BroadcastEffectEvent('Unlocked');
+	InitializeRemainingUpdateAttachmentLocationsCounter();
 
 	// update officer door knowledge in standalone
 	UpdateOfficerDoorKnowledge();
@@ -817,7 +830,7 @@ local Door LevelDoor;
 
 	if(bIsLocked)
 	{
-		BroadcastEffectEvent('LockedDoorTried');
+		BroadcastEffectEvent('CheckLockedDoorTried');
 		UpdateOfficerDoorKnowledge(true);
 		Caller.DoorIsLocked();
 
@@ -827,7 +840,7 @@ local Door LevelDoor;
 	}
 	else
 	{
-		BroadcastEffectEvent('Unlocked');
+		BroadcastEffectEvent('CheckUnlocked');
 		UpdateOfficerDoorKnowledge(false);
 		Caller.DoorIsNotLocked();
 
@@ -863,7 +876,9 @@ simulated function OnDoorLockedByOperator() {
 	}
 
 	bIsLocked = true;
-	TriggerEffectEvent('Unlocked');
+	SoundPropagationDistancePenalty = 0.0;
+	BroadcastEffectEvent('Unlocked');
+	InitializeRemainingUpdateAttachmentLocationsCounter();
 
 	UpdateOfficerDoorKnowledge(true);
 
@@ -1533,6 +1548,7 @@ simulated state Moving
 
     simulated function OnMoveEnded()
     {
+		SoundPropagationDistancePenalty = 700.0;
     }
 
     simulated function Tick( float dTime )
@@ -1632,7 +1648,9 @@ Begin:
 simulated state Opening extends Moving
 {
     simulated function StartMoving()
-    {	
+    {
+		SoundPropagationDistancePenalty = 0.0;
+		
 		NotifyRegistrantsDoorOpening();
 		
 		if ( level.NetMode != NM_Client)
@@ -1679,6 +1697,7 @@ simulated state Opening extends Moving
 
     simulated function OnMoveEnded()
     {
+		SoundPropagationDistancePenalty = 700.0;
     }
 }
 
@@ -1692,6 +1711,8 @@ simulated state Closing extends Moving
 
     simulated function StartMoving()
     {
+		SoundPropagationDistancePenalty = 0.0;
+		
         if (CurrentPosition == DoorPosition_OpenLeft)
             PlayAnim('CloseFromLeft');
         else if (CurrentPosition == DoorPosition_OpenRight)
@@ -1732,6 +1753,8 @@ simulated state OpeningBlocked extends Blocked
 {
     simulated function StartMoving()
     {
+		SoundPropagationDistancePenalty = 0.0;
+		
         if (PendingPosition == DoorPosition_OpenLeft)
             PlayAnim('CloseBlockedLeft');
         else
@@ -1744,6 +1767,8 @@ simulated state ClosingBlocked extends Blocked
 {
     simulated function StartMoving()
     {
+		SoundPropagationDistancePenalty = 0.0;
+		
         if (CurrentPosition == DoorPosition_OpenLeft)
             PlayAnim('OpenBlockedLeft');
         else
@@ -1766,6 +1791,7 @@ simulated state BeingBlasted extends Moving
 
     simulated function StartMoving()
     {
+		SoundPropagationDistancePenalty = 0.0;
 		
 		if (!IsWedged())
 		{
@@ -1807,6 +1833,8 @@ simulated state BeingBreached extends Moving
 
     simulated function StartMoving()
     {
+		SoundPropagationDistancePenalty = 0.0;
+		
 				if(IsBoobyTrapped() && TrapIsDisabledByC2()) {
 					DisableBoobyTrap();
 				}
@@ -3070,8 +3098,8 @@ defaultproperties
 	
 	MoveAndClearPauseThreshold=128.0
 
-	LeftAdditionalGrenadeThrowDistance=100.0
-	RightAdditionalGrenadeThrowDistance=100.0
+	LeftAdditionalGrenadeThrowDistance=400.0
+	RightAdditionalGrenadeThrowDistance=400.0
 
-    RemainingUpdateAttachmentLocationsCounter=0
+    RemainingUpdateAttachmentLocationsCounter=-1
 }
