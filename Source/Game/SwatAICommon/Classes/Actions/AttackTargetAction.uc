@@ -372,7 +372,7 @@ protected latent function AimAndFireAtTarget(FiredWeapon CurrentWeapon)
 		Sleep(WaitTimeBeforeFiring);*/
 	
 	// suspects don't care if they need to acquire a target perfectly
-	if(m_Pawn.IsA('SwatEnemy') && (ShotsFired == 0) && !bSuppressiveFire)
+	if(m_Pawn.IsA('SwatEnemy') && (ShotsFired == 0) && !bSuppressiveFire && Target.IsA('SwatOfficer'))
 	{
 		LatentAimAtActor(Target, ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring());
 	}
@@ -409,7 +409,7 @@ protected latent function ShootInAimDirection(FiredWeapon CurrentWeapon)
 	/*if (WaitTimeBeforeFiring > 0)
 		Sleep(WaitTimeBeforeFiring);*/
 		
-	if ((ShotsFired == 0) && !bSuppressiveFire)
+	if ((ShotsFired == 0) && !bSuppressiveFire && Target.IsA('SwatOfficer'))
 	{
 		LatentAimAtActor(Target, ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring());
 	}
