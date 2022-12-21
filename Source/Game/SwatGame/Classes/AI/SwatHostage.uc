@@ -225,7 +225,7 @@ function NotifyBecameIncapacitated(Pawn Incapacitator)
 		
 	if (!DOATimerRunning() && !IsDead() && !bSpawnedAsIncapacitated)
 	{
-		AIData.DOATimer.StartTimer((Health + 1) * 15.0, false);
+		AIData.DOATimer.StartTimer(Max(Health, 4) * 15.0, false);
 	}
 
 }
