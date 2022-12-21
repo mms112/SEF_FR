@@ -291,6 +291,8 @@ Begin:
 				useResources(class'AI_Resource'.const.RU_LEGS);
 
 				RestrainTarget();
+				
+				sleep(5.0);
 
 				ReportTarget();
 
