@@ -181,8 +181,12 @@ final function UpdateThreatToTarget(Actor Target)
 	}
 }
 
-final latent function LatentAimAtActor(Actor Target, optional float MaxWaitTime)
+final latent function LatentAimAtActor(Actor Target, optional float MinWaitTime)
 {
+	local float StartTime;
+	
+	StartTime = Level.TimeSeconds;
+	
     // only aim at if if we can
     if (ISwatAI(m_Pawn).AnimCanAimAtDesiredActor(Target) && HasWeaponEquipped())
     {
@@ -198,7 +202,8 @@ final latent function LatentAimAtActor(Actor Target, optional float MaxWaitTime)
 
         // wait until we aim at what we want to
         while ((!ISwatAI(m_pawn).AnimIsAimedAtDesired() && HasWeaponEquipped()) || 
-			    ISwatAI(m_Pawn).AnimAreAimingChannelsMuted())
+			    ISwatAI(m_Pawn).AnimAreAimingChannelsMuted() ||
+				((Level.TimeSeconds - StartTime) < MinWaitTime))
         {
 //			log("aiming at actor update - AnimIsAimedAtDesired: " $ ISwatAI(m_pawn).AnimIsAimedAtDesired() $ " HasWeaponEquipped: " $ HasWeaponEquipped() $ " AnimAreAimingChannelsMuted: " $ ISwatAI(m_Pawn).AnimAreAimingChannelsMuted());
 			// See if we have waited past the threshold

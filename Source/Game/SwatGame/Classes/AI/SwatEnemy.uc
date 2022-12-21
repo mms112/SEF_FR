@@ -29,20 +29,12 @@ var config float						LowSkillAdditionalBaseAimError;
 var config float						MediumSkillAdditionalBaseAimError;
 var config float						HighSkillAdditionalBaseAimError;
 
-/*
-var config float						LowSkillMinTimeToFireFullAuto;
-var config float						LowSkillMaxTimeToFireFullAuto;
-var config float						MediumSkillMinTimeToFireFullAuto;
-var config float						MediumSkillMaxTimeToFireFullAuto;
-var config float						HighSkillMinTimeToFireFullAuto;
-var config float						HighSkillMaxTimeToFireFullAuto;
-*/
-var float NoDropRoll;
-var float unused2;
-var float unused3;
-var float unused4;
-var float unused5;
-var float unused6;
+var config float            			LowSkillMinTimeBeforeShooting;
+var config float            			LowSkillMaxTimeBeforeShooting;
+var config float            			MediumSkillMinTimeBeforeShooting;
+var config float            			MediumSkillMaxTimeBeforeShooting;
+var config float            			HighSkillMinTimeBeforeShooting;
+var config float            			HighSkillMaxTimeBeforeShooting;
 
 //var config float						MinDistanceToAffectMoraleOfOtherEnemiesUponDeath;
 var protected Timer ThreatTimer;
@@ -66,7 +58,7 @@ var array<name> unused9;
 var array<name> unused10;
 var array<name> unused11;
 
-var float unused12;
+var float NoDropRoll;
 var float unused13;
 var float unused14;
 
@@ -1271,11 +1263,11 @@ function float GetTimeToWaitBeforeFiring()
   switch(Skill)
   {
     case EnemySkill_High:
-      return RandRange(class'SwatEnemyConfig'.default.HighSkillMinTimeBeforeShooting, class'SwatEnemyConfig'.default.HighSkillMaxTimeBeforeShooting);
+      return RandRange(HighSkillMinTimeBeforeShooting, HighSkillMaxTimeBeforeShooting);
     case EnemySkill_Medium:
-      return RandRange(class'SwatEnemyConfig'.default.MediumSkillMinTimeBeforeShooting, class'SwatEnemyConfig'.default.MediumSkillMaxTimeBeforeShooting);
+      return RandRange(MediumSkillMinTimeBeforeShooting, MediumSkillMaxTimeBeforeShooting);
     case EnemySkill_Low:
-      return RandRange(class'SwatEnemyConfig'.default.LowSkillMinTimeBeforeShooting, class'SwatEnemyConfig'.default.LowSkillMaxTimeBeforeShooting);
+      return RandRange(LowSkillMinTimeBeforeShooting, LowSkillMaxTimeBeforeShooting);
   }
 }
 
