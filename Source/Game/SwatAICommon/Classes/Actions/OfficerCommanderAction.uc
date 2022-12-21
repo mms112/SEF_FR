@@ -526,12 +526,7 @@ private function bool ShouldAttackUsingLessLethal(Pawn target)
 		return false;
 	}
 
-	if(GetHive().IsMovingTo(self.m_Pawn) || GetHive().IsFallingIn(self.m_Pawn))
-	{	// The AI is trained to attack on the move in this state; we don't want them to walk up to people and start beaning them.
-		return true;
-	}
-
-	return false;
+	return true;
 }
 
 private latent function EngageAssignment()
