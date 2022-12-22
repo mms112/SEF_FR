@@ -1415,7 +1415,7 @@ protected function bool MoveToActor(Actor Destination, int MovementBehaviorPrior
 	return false;
 }
 
-protected function MoveMinimumDistanceAwayFromLocation(vector Location, float MinimumDistance)
+protected function MoveMinimumDistanceAwayFromLocation(vector Location, float MinimumDistance, optional bool bZeroWalkThreshold)
 {
 	local NavigationPoint ClosestPointToMoveTo;
 
@@ -1426,7 +1426,7 @@ protected function MoveMinimumDistanceAwayFromLocation(vector Location, float Mi
 		ClosestPointToMoveTo = SwatAIRepository(Level.AIRepo).GetClosestNavigationPointInRoom(m_Pawn.GetRoomName(), Location, MinimumDistance);
 
 		if (ClosestPointToMoveTo != None)
-			MoveToActor(ClosestPointToMoveTo, kMoveAwayFromLocationGoalPriority);
+			MoveToActor(ClosestPointToMoveTo, kMoveAwayFromLocationGoalPriority, bZeroWalkThreshold);
 	}
 }
 

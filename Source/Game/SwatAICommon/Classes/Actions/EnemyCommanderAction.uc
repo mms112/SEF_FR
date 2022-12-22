@@ -1601,6 +1601,7 @@ function NotifyDoorBlocked(Door BlockedDoor)
 			RemoveSuspiciousGoals();
 			ISwatEnemy(m_Pawn).StopInvestigating();
 			CreateBarricadeGoal(BlockedDoor.Location, false, false, BlockedDoor);
+			MoveMinimumDistanceAwayFromLocation(BlockedDoor.Location, BlockedDoor.CollisionRadius + (m_Pawn.CollisionRadius * 2.0), true);
 		}
 		else
 		{

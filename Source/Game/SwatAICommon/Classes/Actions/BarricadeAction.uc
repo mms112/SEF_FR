@@ -551,6 +551,7 @@ latent function ShootAtOpeningDoor()
 
 	while ((Level.TimeSeconds < EndShootingTime) && (m_Pawn.CanHitTarget(DoorOpening) || (FireAtImmediately != None)))
 	{
+		ISwatEnemy(m_Pawn).GetPrimaryWeapon().AddAimError(AimPenalty_WalkToRun);
 		yield();
 	}
 
@@ -599,17 +600,14 @@ private latent function CloseOpenedDoor()
 state Running
 {
 Begin:
-	while(! resource.requiredResourcesAvailable(achievingGoal.priority, achievingGoal.priority))
-		yield();
-
 	if (FireAtImmediately != None)
 	{
 		DoorOpening = FireAtImmediately;
 		ShootAtOpeningDoor();
-		
-		while(! resource.requiredResourcesAvailable(achievingGoal.priority, achievingGoal.priority))
-			yield();
 	}
+	
+	while(! resource.requiredResourcesAvailable(achievingGoal.priority, achievingGoal.priority))
+		yield();
 	
 	useResources(class'AI_Resource'.const.RU_LEGS);
 
