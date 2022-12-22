@@ -15,18 +15,20 @@ class BarricadeGoal extends SwatCharacterGoal;
 var(parameters) vector	StimuliOrigin;
 var(parameters) bool	bDelayBarricade;
 var(parameters) bool	bCanCloseDoors;
+var(parameters) Door	FireAtImmediately;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Overloaded Constructor
 
-overloaded function construct(AI_Resource r, vector inStimuliOrigin, bool bInDelayBarricade, bool bInCanCloseDoors)
+overloaded function construct(AI_Resource r, vector inStimuliOrigin, bool bInDelayBarricade, bool bInCanCloseDoors, optional Door inFireAtImmediately)
 {
 	super.construct( r, priority );
 
 	StimuliOrigin   = inStimuliOrigin;
 	bDelayBarricade = bInDelayBarricade;
 	bCanCloseDoors  = bInCanCloseDoors;
+	FireAtImmediately = inFireAtImmediately;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

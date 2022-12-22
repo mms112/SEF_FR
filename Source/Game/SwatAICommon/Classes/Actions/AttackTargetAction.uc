@@ -376,11 +376,14 @@ protected latent function AimAndFireAtTarget(FiredWeapon CurrentWeapon)
 	{
 		LatentAimAtActor(Target, ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring());
 	}
-	else
+	else if (!bSuppressiveFire)
 	{	// SWAT need perfect aim!
 		LatentAimAtActor(Target);
 	}
-
+	else
+	{
+		//Do nothing, just fire...
+	}
 
 /*
 	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
@@ -413,9 +416,13 @@ protected latent function ShootInAimDirection(FiredWeapon CurrentWeapon)
 	{
 		LatentAimAtActor(Target, ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring());
 	}
-	else
+	else if (!bSuppressiveFire)
 	{
 		LatentAimAtActor(Target);
+	}
+	else
+	{
+		//Do nothing, just fire...
 	}
 		
 	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
@@ -531,7 +538,7 @@ state Running
 		
 		checkPawn(); //attacker better not be arrested
 		
-		if ( targetSensor.queryObjectValue() == None )
+		if ((targetSensor.queryObjectValue() == None) && !bSuppressiveFire)
 		{
 			if (m_Pawn.logTyrion)
 				log(m_Pawn.Name $ " pausing because queryObjectValue == None");

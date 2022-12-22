@@ -884,7 +884,7 @@ private function BecomeSuspicious(vector SuspiciousEventOrigin, optional bool bO
 		{
 			CreateInvestigateGoal(SuspiciousEventOrigin);
 		}
-		else if ((bOnlyBarricade || bBarricade) && ((CurrentBarricadeGoal == None) || CurrentBarricadeGoal.hasCompleted()))
+		else if ((bOnlyBarricade || bBarricade) && ((CurrentBarricadeGoal == None) || CurrentBarricadeGoal.hasCompleted()) && ((CurrentInvestigateGoal == None) || CurrentInvestigateGoal.hasCompleted()))
 		{
 			ISwatEnemy(m_Pawn).StopInvestigating();	// don't investigate after we've already concluded that SWAT is here
 			CreateBarricadeGoal(SuspiciousEventOrigin, true, true);
@@ -1422,12 +1422,19 @@ function CreateInvestigateGoal(vector InvestigateLocation)
     CurrentInvestigateGoal.postGoal(self);
 }
 
-function CreateBarricadeGoal(vector StimuliOrigin, bool bAllowBarricadeDelay, bool bCanCloseDoors)
+function CreateBarricadeGoal(vector StimuliOrigin, bool bAllowBarricadeDelay, bool bCanCloseDoors, optional Door FireAtImmediately)
 {
+	if ((CurrentBarricadeGoal != None) && CurrentBarricadeGoal.hasCompleted())
+	{
+		CurrentBarricadeGoal.unPostGoal(self);
+		CurrentBarricadeGoal.Release();
+		CurrentBarricadeGoal = None;
+	}
+	
 	// if there is an existing barricade goal, we don't want to add a new one
 	if (CurrentBarricadeGoal == None)
 	{
-		CurrentBarricadeGoal = new class'BarricadeGoal'(AI_Resource(m_Pawn.characterAI), StimuliOrigin, bAllowBarricadeDelay, bCanCloseDoors);
+		CurrentBarricadeGoal = new class'BarricadeGoal'(AI_Resource(m_Pawn.characterAI), StimuliOrigin, bAllowBarricadeDelay, bCanCloseDoors, FireAtImmediately);
 		assert(CurrentBarricadeGoal != None);
 		CurrentBarricadeGoal.AddRef();
 
@@ -1542,15 +1549,6 @@ function NotifyDoorBlocked(Door BlockedDoor)
 	// we're supposed to call down the chain
 	super.NotifyDoorBlocked(BlockedDoor);
 
-	if (ISwatDoor(BlockedDoor).WasBlockedBy('SwatOfficer') ||
-		ISwatDoor(BlockedDoor).WasBlockedBy('SwatPlayer'))
-	{
-		// do some speech
-		ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerDoorBlockedSpeech();
-
-		CreateBarricadeGoal(BlockedDoor.Location, false, false);
-	}
-
 	if (LastBlockedDoor == BlockedDoor)
 	{
 		BlockedDoorCount++;
@@ -1571,6 +1569,25 @@ function NotifyDoorBlocked(Door BlockedDoor)
 	{
 		LastBlockedDoor  = BlockedDoor;
 		BlockedDoorCount = 1;
+	}
+	
+	if (ISwatDoor(BlockedDoor).WasBlockedBy('SwatOfficer') ||
+		ISwatDoor(BlockedDoor).WasBlockedBy('SwatPlayer'))
+	{
+		// do some speech
+		ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerDoorBlockedSpeech();
+
+		//50% chance to fire at a door blocked by SWAT
+		if (FRand() < 0.5)
+		{
+			RemoveSuspiciousGoals();
+			ISwatEnemy(m_Pawn).StopInvestigating();
+			CreateBarricadeGoal(BlockedDoor.Location, false, false, BlockedDoor);
+		}
+		else
+		{
+			CreateBarricadeGoal(BlockedDoor.Location, false, false);
+		}
 	}
 }
 

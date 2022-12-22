@@ -16,6 +16,7 @@ const kMaxAimAroundTime = 4.0;
 var(parameters) vector			StimuliOrigin;
 var(parameters) bool			bDelayBarricade;
 var(parameters) bool			bCanCloseDoors;
+var(parameters) Door			FireAtImmediately;
 
 // behaviors we use
 var private AimAroundGoal		CurrentAimAroundGoal;
@@ -547,7 +548,7 @@ latent function ShootAtOpeningDoor()
 
 	EndShootingTime = Level.TimeSeconds + RandRange(MinShootingAtDoorsTime, MaxShootingAtDoorsTime);
 
-	while ((Level.TimeSeconds < EndShootingTime) && m_Pawn.CanHitTarget(DoorOpening))
+	while ((Level.TimeSeconds < EndShootingTime) && (m_Pawn.CanHitTarget(DoorOpening) || (FireAtImmediately != None)))
 	{
 		yield();
 	}
@@ -596,11 +597,23 @@ Begin:
 	while(! resource.requiredResourcesAvailable(achievingGoal.priority, achievingGoal.priority))
 		yield();
 
+	if (FireAtImmediately != None)
+	{
+		DoorOpening = FireAtImmediately;
+		ShootAtOpeningDoor();
+	}
+	
 	useResources(class'AI_Resource'.const.RU_LEGS);
 
 	FindBarricadePoint();
 	PopulateDoorsInRoom();
-	AimAtClosestDoor();
+	
+	if (FireAtImmediately == None)
+	{
+		AimAtClosestDoor();
+	}
+	
+	FireAtImmediately = None;
 
 	useResources(class'AI_Resource'.const.RU_ARMS);
 
@@ -608,8 +621,6 @@ Begin:
 	{
 		sleep(RandRange(MinBarricadeDelayTime, MaxBarricadeDelayTime));
 	}
-
-	CheckWeaponStatus();
 
 	// clear the dummy  movement goal so we can move to close and lock doors,
 	// as well as to move to the flee point in the room
@@ -627,6 +638,7 @@ Begin:
 
 	useResources(class'AI_Resource'.const.RU_LEGS);
 
+	CheckWeaponStatus();
 	ClearDummyWeaponGoal();
 	AimAround();
 

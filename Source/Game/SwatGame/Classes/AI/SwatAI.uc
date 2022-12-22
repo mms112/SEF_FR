@@ -2356,7 +2356,7 @@ simulated private function bool CanHitCurrentTarget()
 {
 	if (CurrentWeaponTarget != None)
 	{
-		return CanHitEx(CurrentWeaponTarget, true);
+		return CanHitTarget(CurrentWeaponTarget);
 	}
 	else
 	{
