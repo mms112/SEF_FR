@@ -21,6 +21,7 @@ var(Parameters) private bool	 bAimWeapon;
 var(Parameters) private bool	 bHoldAimForPeriodOfTime;
 var(Parameters) private float	 HoldAimTime;
 var(Parameters) private float	 MinDistanceToTargetToAim;
+var(Parameters) private bool	 bAimOnce;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -62,6 +63,8 @@ latent function AimAtTarget()
     {
         LatentAimAtActor(Target);
 		yield();
+		
+		if (bAimOnce) return;
     }
 }
 

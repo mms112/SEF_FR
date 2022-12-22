@@ -17,6 +17,7 @@ var(Parameters) private bool	 bAimWeapon;
 var(Parameters) private bool	 bHoldAimForPeriodOfTime;
 var(Parameters) private float	 HoldAimTime;
 var(Parameters) private float	 MinDistanceToTargetToAim;
+var(Parameters) private bool	 bAimOnce;
 
 ///////////////////////////////////////////////////////////////////////////////
 // 
@@ -80,6 +81,11 @@ function SetMinDistanceToTargetToAim(float inMinDistanceToTargetToAim)
 	MinDistanceToTargetToAim = inMinDistanceToTargetToAim;
 }
 
+function SetAimOnce(bool inAimOnce)
+{
+	bAimOnce = inAimOnce;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
@@ -88,5 +94,6 @@ defaultproperties
 	bOnlyWhenCanHitTarget = false
 	bShouldFinishOnSuccess = false
 	bAimWeapon = true
+	bAimOnce = false
 }
 

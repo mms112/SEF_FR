@@ -779,6 +779,7 @@ function OnHeardNoise()
 	local Pawn LastDoorInteractor;
 	local name SoundCategory;
 	local vector SoundOrigin;
+	local bool SameZone;
 
 	HeardActor    = HearingSensor.LastSoundMaker;
 	SoundCategory = HearingSensor.LastSoundHeardCategory;
@@ -795,10 +796,17 @@ function OnHeardNoise()
 		// the owner's owner of ammunition is a pawn
 		HeardPawn = Pawn(HeardActor.Owner.Owner);
 	}
+	else if (HeardActor.IsA('Hands'))
+	{
+		// the owner of the hands is a pawn
+		HeardPawn = Pawn(HeardActor.Owner);
+	}
 	else
 	{
 		HeardPawn = Pawn(HeardActor);
 	}
+	
+	SameZone = m_Pawn.Region.Zone == HeardPawn.Region.Zone;
 
 	if (m_Pawn.logTyrion)
 		HearingSensor.DebugHearingSensorToLog();
@@ -815,21 +823,31 @@ function OnHeardNoise()
 	else
 	{
 		//
-		if ((HeardPawn != None) && ISwatAI(m_Pawn).IsOtherActorAThreat(HeardPawn) && m_Pawn.LineOfSightTo(HeardPawn) &&
+		if ((HeardPawn != None) && ISwatAI(m_Pawn).IsOtherActorAThreat(HeardPawn) && (m_Pawn.LineOfSightTo(HeardPawn) || SameZone) &&
 			(DoesSoundCauseUsToKnowAboutPawn(SoundCategory) || DoWeKnowAboutPawn(HeardPawn)))
 		{
 	//		log(m_Pawn.Name $ " going to encounter enemy");
 
 			ISwatAI(m_pawn).GetKnowledge().UpdateKnowledgeAboutPawn(HeardPawn);
 
-			EncounterEnemy(HeardPawn);
+			if (m_Pawn.LineOfSightTo(HeardPawn))
+			{
+				EncounterEnemy(HeardPawn);
+			}
+			else
+			{
+				bIgnoreCurrentEnemy = true;
+
+				if (isIdle())
+					runAction();
+			}
 		}
 		
 		ISwatEnemy(m_Pawn).OnHeardNoise();
 
 		if (SoundCategory == 'Footsteps')
 		{
-			HandleFootstepNoise(HeardPawn, SoundOrigin);
+			HandleFootstepNoise(HeardPawn, SoundOrigin, SameZone);
 		}
 		else if (SoundCategory == 'DoorInteraction')
 		{
@@ -847,7 +865,7 @@ function OnHeardNoise()
 				}
 				else
 				{
-					BecomeSuspicious(SoundOrigin);
+					BecomeSuspicious(SoundOrigin, SameZone);
 				}
 			}
 		}
@@ -856,12 +874,12 @@ function OnHeardNoise()
 	//		log(m_Pawn.Name $ " becoming suspicious - HeardPawn is a sniper: " $ ((HeardPawn != None) && HeardPawn.IsA('SniperPawn')));
 
 			// if we heard sniper fire, we shouldn't investigate, otherwise we let BecomeSuspicious determine what we should do
-			BecomeSuspicious(SoundOrigin, ((HeardPawn != None) && HeardPawn.IsA('SniperPawn')));
+			BecomeSuspicious(SoundOrigin, SameZone, ((HeardPawn != None) && HeardPawn.IsA('SniperPawn')));
 		}
 	}
 }
 
-private function BecomeSuspicious(vector SuspiciousEventOrigin, optional bool bOnlyBarricade)
+private function BecomeSuspicious(vector SuspiciousEventOrigin, bool SameZone, optional bool bOnlyBarricade)
 {
 	local bool bInvestigate;
 	local bool bBarricade;
@@ -889,7 +907,7 @@ private function BecomeSuspicious(vector SuspiciousEventOrigin, optional bool bO
 			ISwatEnemy(m_Pawn).StopInvestigating();	// don't investigate after we've already concluded that SWAT is here
 			CreateBarricadeGoal(SuspiciousEventOrigin, true, true);
 		}
-		else if (m_Pawn.FastTrace(SuspiciousEventOrigin, m_Pawn.Location))
+		else if (m_Pawn.FastTrace(SuspiciousEventOrigin, m_Pawn.Location) || SameZone)
 		{
 			RotateToRotation(rotator(SuspiciousEventOrigin - m_Pawn.Location), kRotateToSuspiciousNoisePriority);
 		}
@@ -898,7 +916,7 @@ private function BecomeSuspicious(vector SuspiciousEventOrigin, optional bool bO
 
 // If the footsteps were made within the specified distance by an officer or the player,
 // become suspicious if we aren't already, or become aware of the Heard pawn if we're Aware
-private function HandleFootstepNoise(Pawn HeardPawn, vector FootstepSoundOrigin)
+private function HandleFootstepNoise(Pawn HeardPawn, vector FootstepSoundOrigin, bool SameZone)
 {
 //	log(m_Pawn.Name $ " HandleFootstepNoise - HeardPawn: " $ HeardPawn $ " FootstepSoundOrigin: " $ FootstepSoundOrigin);
 
@@ -915,7 +933,7 @@ private function HandleFootstepNoise(Pawn HeardPawn, vector FootstepSoundOrigin)
 		}
 		else
 		{
-			BecomeSuspicious(FootstepSoundOrigin);
+			BecomeSuspicious(FootstepSoundOrigin, SameZone);
 		}
 	}
 }

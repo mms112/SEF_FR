@@ -31,6 +31,7 @@ var private array<Door>			DoorsInRoom;
 var private array<Door>			ClosableDoorsInRoom;
 var private NavigationPoint		BarricadePoint;
 var private Door				DoorOpening;
+var private bool				bAlreadyShotAtDoor;
 
 // sensors we use
 var private DoorOpeningSensor	DoorOpeningSensor;
@@ -569,6 +570,8 @@ private latent function AimAtOpeningDoor()
 	CurrentAimAtTargetGoal.AddRef();
 
 	CurrentAimAtTargetGoal.SetAimOnlyWhenCanHitTarget(true);
+	CurrentAimAtTargetGoal.SetHoldAimTime(4 * MinShootingAtDoorsTime, 4 * MaxShootingAtDoorsTime);
+	CurrentAimAtTargetGoal.SetAimOnce(true);
 
 	CurrentAimAtTargetGoal.postGoal(self);
 	if (m_Pawn.IsA('SwatEnemy') && !ISwatEnemy(m_Pawn).IsAThreat())
@@ -577,12 +580,14 @@ private latent function AimAtOpeningDoor()
 		yield();
 	}	
 
-	while (DoorOpening.IsOpening())
+	while (!CurrentAimAtTargetGoal.hasCompleted())
 		yield();
 
 	CurrentAimAtTargetGoal.unPostGoal(self);
 	CurrentAimAtTargetGoal.Release();
 	CurrentAimAtTargetGoal = None;
+	
+	ISwatEnemy(m_Pawn).UnbecomeAThreat(true, 1.0); 
 }
 
 private latent function CloseOpenedDoor()
@@ -601,6 +606,9 @@ Begin:
 	{
 		DoorOpening = FireAtImmediately;
 		ShootAtOpeningDoor();
+		
+		while(! resource.requiredResourcesAvailable(achievingGoal.priority, achievingGoal.priority))
+			yield();
 	}
 	
 	useResources(class'AI_Resource'.const.RU_LEGS);
@@ -636,7 +644,7 @@ Begin:
 //GetInPosition:
     MoveToBarricadePoint();
 
-	useResources(class'AI_Resource'.const.RU_LEGS);
+	//useResources(class'AI_Resource'.const.RU_LEGS);
 
 	CheckWeaponStatus();
 	ClearDummyWeaponGoal();
@@ -657,27 +665,33 @@ Begin:
 
 	ActivateVisionSensor(); //if sensor is triggered just fail
 
-	// wait for a door to start opening, if that ever happens
-	pause();
-
-	if (m_Pawn.CanHitTarget(DoorOpening))
+	while (true)
 	{
-		RemoveAimAroundGoal();
-
-		if ((FRand() < ShootAtDoorsChance) && !m_Pawn.IsA('SwatUndercover'))
+		// wait for a door to start opening, if that ever happens
+		pause();
+	
+		if (ISwatAI(m_Pawn).IsOtherActorAThreat(ISwatDoor(DoorOpening).GetLastInteractor()))
 		{
-			ShootAtOpeningDoor();
-		}
-		else
-		{
-			// aim at the door while it's opening
-			AimAtOpeningDoor();
+			ISwatAI(m_pawn).GetKnowledge().UpdateKnowledgeAboutPawn(ISwatDoor(DoorOpening).GetLastInteractor());
 		}
 
-		// aim around again
-		AimAround();
-	}
+		if (m_Pawn.CanHitTarget(DoorOpening))
+		{
+			RemoveAimAroundGoal();
+
+			if ((FRand() < ShootAtDoorsChance) && !m_Pawn.IsA('SwatUndercover') && !bAlreadyShotAtDoor)
+			{
+				ShootAtOpeningDoor();
+				CheckWeaponStatus();
+				bAlreadyShotAtDoor = true;
+			}
 		
+			AimAtOpeningDoor();
+
+			// aim around again
+			AimAround();
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
