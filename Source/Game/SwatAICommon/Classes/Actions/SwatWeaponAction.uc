@@ -191,10 +191,13 @@ final latent function LatentAimAtActor(Actor Target, optional float MinWaitTime)
     if (ISwatAI(m_Pawn).AnimCanAimAtDesiredActor(Target) && HasWeaponEquipped())
     {
 		// added here so server can spread information on suspect intentions before even aiming.
-		if( m_pawn.isa('SwatEnemy') )
+		if ( Level.NetMode != NM_Standalone )
 		{
-			UpdateThreatToTarget(Target);
-			yield();
+			if( m_pawn.isa('SwatEnemy') )
+			{
+				UpdateThreatToTarget(Target);
+				yield();
+			}
 		}
 		//////////////////////////////
 		
