@@ -277,7 +277,7 @@ latent function ShootWeaponAt(Actor Target)
     CurrentWeapon = FiredWeapon(m_pawn.GetActiveItem());    
 
 
-	if(CurrentWeapon.bAbleToMelee && (CurrentWeapon != None) && !Target.IsA('Door'))
+	if(CurrentWeapon.bAbleToMelee && (CurrentWeapon != None) && !Target.IsA('Door') && CurrentWeapon.HasMeleeAnimation())
 	{
 		DistanceFromTarget = Vsize( m_Pawn.Location - Target.Location ) ;
 		
