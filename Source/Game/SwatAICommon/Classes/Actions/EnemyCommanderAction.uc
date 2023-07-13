@@ -1523,10 +1523,11 @@ function NotifyDoorWedged(Door WedgedDoor)
 	   
 		for (C = Level.ControllerList; C != none && !DoRemoveWedge ; C = C.nextController)
 		{
-			Distance = VSize2D(WedgedDoor.Location - C.Location);
-			if (Distance < 2000 ) //4000 estimated distance... to be tested!
+			if (C.bIsPlayer)
 			{
-				DoRemoveWedge=true;
+				Distance = VSize2D(WedgedDoor.Location - C.Location);
+				if (Distance > 2000 ) //4000 estimated distance... to be tested!
+					DoRemoveWedge=true;
 			}
 
 		}
