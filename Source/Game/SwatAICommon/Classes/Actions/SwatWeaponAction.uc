@@ -214,7 +214,7 @@ final latent function LatentAimAtActor(Actor Target, optional float MinWaitTime)
             yield();
 			ISwatAI(m_pawn).AimAtActor(Target);
         }
-		//UpdateThreatToTarget(Target);
+		UpdateThreatToTarget(Target);
     }
 }
 
