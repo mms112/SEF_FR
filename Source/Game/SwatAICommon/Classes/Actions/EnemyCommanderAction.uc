@@ -908,7 +908,7 @@ function OnHeardNoise()
 	}
 }
 
-private function BecomeSuspicious(vector SuspiciousEventOrigin, bool SameZone, optional bool bOnlyBarricade, , optional bool bOnlyInvestigate)
+private function BecomeSuspicious(vector SuspiciousEventOrigin, bool SameZone, optional bool bOnlyBarricade, optional bool bOnlyInvestigate)
 {
 	local bool bInvestigate;
 	local bool bBarricade;

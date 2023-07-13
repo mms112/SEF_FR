@@ -309,6 +309,13 @@ function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorC
 		CurrentMoveToActorGoal.Release();
 		CurrentMoveToActorGoal = None;
 	}
+	
+	// Make sure we go back to the idle!
+	if(ISwatAI(m_Pawn).IsArrested())
+	{
+		ISwatAI(m_Pawn).SetIdleCategory('Restrained');
+		ISwatAI(m_Pawn).SwapInRestrainedAnimSet();
+	}
 
 	// we shouldn't run from the stunning device now.
 	bShouldRunFromStunningDevice                            = false;
