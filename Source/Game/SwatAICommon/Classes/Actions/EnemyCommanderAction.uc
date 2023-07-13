@@ -831,17 +831,16 @@ function OnHeardNoise()
 			if ((HeardPawn != None) && ISwatAI(m_Pawn).IsOtherActorAThreat(HeardPawn) )
 			{
 				
-				if ( m_Pawn.LineOfSightTo(HeardPawn) || DoWeKnowAboutPawn(HeardPawn) || Distance < 800 )
+				if ( m_Pawn.LineOfSightTo(HeardPawn) || DoWeKnowAboutPawn(HeardPawn) )
 				{//		log(m_Pawn.Name $ " going to encounter enemy");
 					
-					if ( frand () < GetInvestigateSoundChance() )
 						ISwatAI(m_pawn).GetKnowledge().UpdateKnowledgeAboutPawn(HeardPawn);
 						EncounterEnemy(HeardPawn);
 				}
 				else
 				{
-					if ( frand () < GetInvestigateSoundChance()  && ( Distance < 1500 ) )
-						BecomeSuspicious(SoundOrigin); 
+					if ( frand () < GetInvestigateSoundChance()  && ( Distance < 800 ) )
+						BecomeSuspicious(SoundOrigin, SameZone, false, true); 
 					else
 						RotateToFaceNoise(HeardPawn);
 					
@@ -909,7 +908,7 @@ function OnHeardNoise()
 	}
 }
 
-private function BecomeSuspicious(vector SuspiciousEventOrigin, bool SameZone, optional bool bOnlyBarricade)
+private function BecomeSuspicious(vector SuspiciousEventOrigin, bool SameZone, optional bool bOnlyBarricade, , optional bool bOnlyInvestigate)
 {
 	local bool bInvestigate;
 	local bool bBarricade;
@@ -928,7 +927,7 @@ private function BecomeSuspicious(vector SuspiciousEventOrigin, bool SameZone, o
 
 		// if we're not investigating or barricading, do that
 		// if we're already invesgigating or barricading, and can fast trace to the point specified, look at the point
-		if (bInvestigate && !bOnlyBarricade && ((CurrentInvestigateGoal == None) || CurrentInvestigateGoal.hasCompleted()))
+		if ( ( bInvestigate || bOnlyInvestigate ) && !bOnlyBarricade && ((CurrentInvestigateGoal == None) || CurrentInvestigateGoal.hasCompleted()))
 		{
 			CreateInvestigateGoal(SuspiciousEventOrigin);
 		}
