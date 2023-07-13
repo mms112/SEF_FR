@@ -468,6 +468,8 @@ protected latent function TakeCover()
 		SwapInFullBodyTakeCoverAnimations();
 	}
 
+	SwapInFullBodyTakeCoverAnimations();
+
 	MoveToTakeCover(CoverResult.coverLocation);
 
 	StopAttacking();
