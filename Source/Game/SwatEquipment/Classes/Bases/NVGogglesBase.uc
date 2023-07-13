@@ -100,6 +100,7 @@ simulated function ActivateEffect()
 			SwatGamePlayerController(P.Controller).RefreshCameraEffects(SwatPlayer(P));
 	}
 
+	Pawn(Owner).AttachToBone(self, AttachmentBone); //sound effects location fix
 	SetStaticMesh(ActivatedMesh);
 	UpdateLight();
 }
@@ -119,6 +120,7 @@ simulated function DeactivateEffect()
 			SwatGamePlayerController(P.Controller).RefreshCameraEffects(SwatPlayer(P));
 	}
 
+	Pawn(Owner).AttachToBone(self, AttachmentBone); //sound effects location fix
 	SetStaticMesh(DeactivatedMesh);
 	UpdateLight();
 }

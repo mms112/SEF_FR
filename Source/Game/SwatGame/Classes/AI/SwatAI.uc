@@ -665,6 +665,10 @@ function SetIdleCategory(name inIdleCategory)
 	if (logTyrion)
 		log("SetIdleCategory changed to: " $ inIdleCategory);
 
+	//forcing idle category back 
+	if (isArrested ())
+		inIdleCategory = 'Restrained';
+
 	// only reset idling if the idle category changes
 	if (IdleCategory != inIdleCategory)
 	{
