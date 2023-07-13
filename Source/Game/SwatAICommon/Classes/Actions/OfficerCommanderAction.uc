@@ -258,7 +258,7 @@ function OnHeardNoise()
 		{
 			ISwatAI(m_pawn).GetKnowledge().UpdateKnowledgeAboutPawn(HeardPawn);
 
-			if (m_Pawn.LineOfSightTo(HeardPawn))
+			if (m_Pawn.LineOfSightTo(HeardPawn) || (VSize(HeardActor.Location - m_Pawn.Location) < 300))
 				RotateToFaceNoise(HeardPawn);
 		}
 	}
@@ -369,7 +369,7 @@ private function bool ShouldEngageTarget(Pawn Target)
 		(ISwatEnemy(Target).IsAThreat() || ShouldAttackRunner(Target)))
 	{
 		//attack if the suspect is a danger and we dont have less lethal
-		if (!ISwatAI(Target).HasUsableWeapon() && !FiredWeapon(m_Pawn.GetActiveItem()).islessLethal())
+		if (!ISwatAI(Target).HasFiredWeaponEquipped() && !FiredWeapon(m_Pawn.GetActiveItem()).islessLethal() && !ISwatPawn(target).IsNonlethaled() )
 			return false;
 		
 		// if the target is a threatening swat enemy, and we're not attacking them, we must act!
@@ -512,7 +512,7 @@ private function bool RunnerIsThreat(Pawn target)
 {
 	local Pawn SO;
 		
-	if (ISwatAI(target).hasUsableweapon())
+	if (ISwatAI(target).HasFiredWeaponEquipped() && !ISwatPawn(target).IsNonlethaled() )
 	{
 		ForEach level.AllActors(class'Pawn', SO )
 		{

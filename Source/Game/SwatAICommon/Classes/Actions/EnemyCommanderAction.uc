@@ -779,6 +779,7 @@ function OnHeardNoise()
 	local Pawn LastDoorInteractor;
 	local name SoundCategory;
 	local vector SoundOrigin;
+	local float Distance;
 	local bool SameZone;
 
 	HeardActor    = HearingSensor.LastSoundMaker;
@@ -813,6 +814,8 @@ function OnHeardNoise()
 
 //	log("OnHeardNoise - HeardActor: " $ HeardActor $ " SoundCategory: " $ SoundCategory $ " HeardPawn: " $ HeardPawn);
 
+	Distance = VSize(HeardActor.Location - m_Pawn.Location);
+
 	if (m_Pawn.IsCompliant() || m_Pawn.IsArrested())
 	{
 		if (HeardActor.IsA('Ammunition') && (VSize(HeardActor.Location - m_Pawn.Location) < MinReactToGunshotDistance) && m_Pawn.LineOfSightTo(HeardActor))
@@ -822,24 +825,51 @@ function OnHeardNoise()
 	}
 	else
 	{
-		//
-		if ((HeardPawn != None) && ISwatAI(m_Pawn).IsOtherActorAThreat(HeardPawn) && (m_Pawn.LineOfSightTo(HeardPawn) || SameZone) &&
-			(DoesSoundCauseUsToKnowAboutPawn(SoundCategory) || DoWeKnowAboutPawn(HeardPawn)))
+		if ( isDeadlyNoise(SoundCategory))
 		{
-	//		log(m_Pawn.Name $ " going to encounter enemy");
-
-			ISwatAI(m_pawn).GetKnowledge().UpdateKnowledgeAboutPawn(HeardPawn);
-
-			if (m_Pawn.LineOfSightTo(HeardPawn))
+			
+			if ((HeardPawn != None) && ISwatAI(m_Pawn).IsOtherActorAThreat(HeardPawn) )
 			{
-				EncounterEnemy(HeardPawn);
+				
+				if ( m_Pawn.LineOfSightTo(HeardPawn) || DoWeKnowAboutPawn(HeardPawn) || Distance < 800 )
+				{//		log(m_Pawn.Name $ " going to encounter enemy");
+					
+					if ( frand () < GetInvestigateSoundChance() )
+						ISwatAI(m_pawn).GetKnowledge().UpdateKnowledgeAboutPawn(HeardPawn);
+						EncounterEnemy(HeardPawn);
+				}
+				else
+				{
+					if ( frand () < GetInvestigateSoundChance()  && ( Distance < 1500 ) )
+						BecomeSuspicious(SoundOrigin); 
+					else
+						RotateToFaceNoise(HeardPawn);
+					
+				}
 			}
-			else
+				
+		}
+		else
+		{
+			//
+			if ((HeardPawn != None) && ISwatAI(m_Pawn).IsOtherActorAThreat(HeardPawn) && (m_Pawn.LineOfSightTo(HeardPawn) || SameZone) &&
+				(DoesSoundCauseUsToKnowAboutPawn(SoundCategory) || DoWeKnowAboutPawn(HeardPawn)))
 			{
-				bIgnoreCurrentEnemy = true;
+				//		log(m_Pawn.Name $ " going to encounter enemy");
 
-				if (isIdle())
-					runAction();
+				ISwatAI(m_pawn).GetKnowledge().UpdateKnowledgeAboutPawn(HeardPawn);
+
+				if (m_Pawn.LineOfSightTo(HeardPawn))
+				{
+					EncounterEnemy(HeardPawn);
+				}
+				else
+				{
+					bIgnoreCurrentEnemy = true;
+
+					if (isIdle())
+						runAction();
+				}
 			}
 		}
 		
@@ -934,6 +964,30 @@ private function HandleFootstepNoise(Pawn HeardPawn, vector FootstepSoundOrigin,
 		else
 		{
 			BecomeSuspicious(FootstepSoundOrigin, SameZone);
+		}
+	}
+}
+
+private function RotateToFaceNoise(Actor NoisyActor)
+{
+	assert(NoisyActor != None);
+
+//	log(m_Pawn.Name $ " RotateToFaceNoise - NoisyActor: " $ NoisyActor $ " LineOfSightTo: " $ m_Pawn.LineOfSightTo(NoisyActor) $ " FastTrace: " $ m_Pawn.FastTrace(NoisyActor.Location));
+
+	// just aim if we're moving, rotate if not
+	if (VSize(m_Pawn.Velocity) > 0.0)
+	{
+		if ((CurrentAimAtTargetGoal == None) || CurrentAimAtTargetGoal.hasCompleted())
+		{
+			AimAtTarget(NoisyActor, 55, true, class'EnemyCommanderActionConfig'.default.MinAimAtNoiseWhileMovingTime, class'EnemyCommanderActionConfig'.default.MaxAimAtNoiseWhileMovingTime);
+		}
+	}
+	else
+	{
+		// if we aren't rotating or have finished rotating, rotate to face the heard pawn
+		if ((CurrentRotateTowardActorGoal == None) || CurrentRotateTowardActorGoal.hasCompleted())
+		{
+			RotateToFace(NoisyActor, 55);
 		}
 	}
 }
@@ -1321,6 +1375,36 @@ private function float GetInitialReactionChance()
 	    }
     }
 }
+
+private function float GetInvestigateSoundChance()
+{
+	local EnemySkill CurrentEnemySkill;
+
+    // @HACK: Special case, guards always want to have an initial reaction.
+    // [darren]
+    if (m_Pawn.IsA('SwatGuard'))
+    {
+        return 0.0;
+    }
+    else
+    {
+	    CurrentEnemySkill = ISwatEnemy(m_Pawn).GetEnemySkill();
+	    switch(CurrentEnemySkill)
+	    {
+		    case EnemySkill_Low:
+                return class'EnemyCommanderActionConfig'.default.LowSkillInvestigateSoundChance;
+            case EnemySkill_Medium:
+                return class'EnemyCommanderActionConfig'.default.MediumSkillInvestigateSoundChance;
+            case EnemySkill_High:
+                return class'EnemyCommanderActionConfig'.default.HighSkillInvestigateSoundChance;
+            default:
+                assert(false);
+                return 0.0;
+	    }
+    }
+}
+
+
 
 private function bool ShouldDoInitialReaction()
 {

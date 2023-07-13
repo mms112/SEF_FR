@@ -300,7 +300,7 @@ latent function ShootWeaponAt(Actor Target)
 			}
 			else if (m_Pawn.IsA('SwatEnemy')  && !ISwatAICharacter(m_Pawn).IsFemale() ) //women cant melee cause missing animations
 			{
-				if (FRand() < 0.5 ) //50% chance of meleeing
+				if (FRand() < 0.35 ) //50% chance of meleeing
 				{
 					CurrentWeapon.Melee();
 					sleep(1.0); //wait for melee to finish
