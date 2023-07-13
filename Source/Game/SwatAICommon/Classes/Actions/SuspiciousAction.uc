@@ -19,7 +19,7 @@ protected latent function CheckWeaponStatus()
 
 		if (CurrentWeapon != None)
 		{
-			if (CurrentWeapon.NeedsReload() && CurrentWeapon.CanReload())
+			if (CurrentWeapon.ShouldReload() && CurrentWeapon.CanReload())
 			{
 				CurrentWeapon.LatentReload();
 			}
