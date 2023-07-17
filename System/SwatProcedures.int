@@ -73,6 +73,6 @@ ChatMessage=[c=ffff00]Suspect Escaped (-2)[\c]
 Description=Tripped a trap
 ChatMessage=[c=ffff00]Triggered Trap (-2)[\c]
 
-[Procedure_NoForcedArrest]
-Description=Forced arrest penalty
-ChatMessage=[c=ffff00]Forced arrest penalty (-2)[\c]
+[Procedure_PreventEvidenceDestroyed]
+Description=Failed to prevent the destruction of evidence
+ChatMessage=[c=ffff00]Evidence Destroyed (-2)[\c]

@@ -388,14 +388,21 @@ function PenaltyTriggeredMessage(Pawn Inflictor, string PenaltyMessage)
 	Message = PenaltyMessage;
 	if(Level.NetMode != NM_Standalone)
 	{
-		Message = SwatPawn(Inflictor).GetHumanReadableName()$"\t"$PenaltyMessage;
-		//if (!ServerSettings(Level.CurrentServerSettings).HidePenaltyMessages)
-			Broadcast(Inflictor, Message, 'PenaltyIssuedChat');
-		if(Inflictor.IsA('NetPlayer'))
+		if (Inflictor != None)
 		{
-			IP = PlayerController(Inflictor.Controller).GetPlayerNetworkAddress();
+			Message = SwatPawn(Inflictor).GetHumanReadableName()$"\t"$PenaltyMessage;
+			//if (!ServerSettings(Level.CurrentServerSettings).HidePenaltyMessages)
+				Broadcast(Inflictor, Message, 'PenaltyIssuedChat');
+			if(Inflictor.IsA('NetPlayer'))
+			{
+				IP = PlayerController(Inflictor.Controller).GetPlayerNetworkAddress();
+			}
+			AdminLog(Message, 'PenaltyIssuedChat', IP);
 		}
-		AdminLog(Message, 'PenaltyIssuedChat', IP);
+		else
+		{
+			Broadcast(None, PenaltyMessage, 'PenaltyIssuedChat');
+		}
 	}
 	else
 	{

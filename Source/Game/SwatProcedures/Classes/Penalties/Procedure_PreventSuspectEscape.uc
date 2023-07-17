@@ -26,5 +26,4 @@ function OnSuspectEscaped(SwatPawn Who)
 {
     Add( Who, Escaped );
 	TriggerPenaltyMessage(Who);
-	GetGame().CampaignStats_TrackPenaltyIssued();
 }
