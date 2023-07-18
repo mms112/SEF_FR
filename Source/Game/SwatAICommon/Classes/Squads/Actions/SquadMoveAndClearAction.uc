@@ -725,7 +725,7 @@ latent function PrepareToThrowGrenade(EquipmentSlot GrenadeSlot, bool bWaitToThr
 
 		ThrowSide        = PlacedThrowPointToUse.ThrowSide;
 		ThrowFromPoint   = PlacedThrowPointToUse.Location;
-		TargetThrowPoint = GetTargetThrowPoint(ThrowFromPoint);
+		TargetThrowPoint = GetTargetThrowPoint(CenterPoint);
 
 		if (ThrowSide == kThrowFromCenter)
 		{
@@ -752,7 +752,7 @@ latent function PrepareToThrowGrenade(EquipmentSlot GrenadeSlot, bool bWaitToThr
 		if (ThrowerStackUpPoint.CanThrowFromPoint)
 		{
 			ThrowFromPoint   = ThrowerStackUpPoint.Location;
-			TargetThrowPoint = GetTargetThrowPoint(ThrowFromPoint);
+			TargetThrowPoint = GetTargetThrowPoint(CenterPoint);
 			ThrowSide        = ThrowerStackUpPoint.ThrowSide;
 
 			if (ThrowSide == kThrowFromCenter)
@@ -778,7 +778,7 @@ latent function PrepareToThrowGrenade(EquipmentSlot GrenadeSlot, bool bWaitToThr
 		MoveOfficerToThrowingPoint(Thrower, ThrowFromPoint);
 	}
 
-	CurrentThrowGrenadeGoal = new class'ThrowGrenadeGoal'(AI_Resource(Thrower.characterAI), TargetThrowPoint, Thrower.Location, GrenadeSlot, true);
+	CurrentThrowGrenadeGoal = new class'ThrowGrenadeGoal'(AI_Resource(Thrower.characterAI), TargetThrowPoint, Thrower.Location, GrenadeSlot, true, CenterPoint);
 	assert(CurrentThrowGrenadeGoal != None);
 	CurrentThrowGrenadeGoal.AddRef();
 

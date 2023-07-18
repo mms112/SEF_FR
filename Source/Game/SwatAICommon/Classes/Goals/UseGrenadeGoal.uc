@@ -13,8 +13,10 @@ import enum EquipmentSlot from Engine.HandheldEquipment;
 
 // copied to our action
 var(parameters) vector							vTargetLocation;
+var(parameters) vector							InitialPosition;
 var(parameters) EquipmentSlot					GrenadeSlot;
 var(parameters) bool							bWaitToThrowGrenade;
+var(parameters) bool							bInitialPosOverridden;
 var(parameters) IInterestedGrenadeThrowing		ThrowClient;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -25,12 +27,14 @@ var(parameters) IInterestedGrenadeThrowing		ThrowClient;
 overloaded function construct( AI_Resource r ) { assert(false); }
 
 // use this constructor
-overloaded function construct( AI_Resource r, EquipmentSlot inGrenadeSlot, vector inTargetLocation )
+overloaded function construct( AI_Resource r, EquipmentSlot inGrenadeSlot, vector inTargetLocation, optional bool bInitialPos, optional vector inInitialPosition)
 {
 	super.construct(r, priority);
 
 	vTargetLocation = inTargetLocation;
 	GrenadeSlot     = inGrenadeSlot;
+	bInitialPosOverridden = bInitialPos;
+	InitialPosition = inInitialPosition;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

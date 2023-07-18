@@ -3,6 +3,8 @@ class ThrownWeapon extends Weapon
 
 
 var protected float ThrowSpeed;                   //set this with SetThrowSpeed() before calling Use()
+var protected vector ThrowPosition;
+var protected bool bOverridePosition;
 
 var config class<Actor> ProjectileClass;
 
@@ -20,9 +22,15 @@ simulated function OnPlayerUse()
     Level.GetLocalPlayerController().Throw();
 }
 
-function SetThrowSpeed(float inThrowSpeed)
+function SetThrowSpeed(float inThrowSpeed, optional bool bOverridePos, optional vector Pos)
 {
     ThrowSpeed = inThrowSpeed;
+	
+	if (bOverridePos)
+	{
+		bOverridePosition = true;
+		ThrowPosition = Pos;
+	}
 }
 
 //called from HandheldEquipment::DoUsing()
@@ -87,6 +95,12 @@ simulated function UsedHook()
                               $") cannot throw weapons.");
 
         Holder.GetThrownProjectileParams(InitialLocation, ThrownDirection);
+		
+		if (bOverridePosition)
+		{
+			InitialLocation = ThrowPosition;
+			bOverridePosition = false;
+		}
 
 		// dbeswick: stats
 		OwnerPC = PlayerController(Pawn(Owner).Controller);

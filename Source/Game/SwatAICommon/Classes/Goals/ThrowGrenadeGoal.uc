@@ -19,11 +19,13 @@ import enum AIThrowSide from ISwatAI;
 // copied to our action
 var(parameters) vector							TargetLocation;
 var(parameters) vector							ThrowFromLocation;
+var(parameters) vector							InitialPosition;
 var(parameters) EquipmentSlot					GrenadeSlot;
 var(parameters) AIThrowSide						ThrowSide;
 var(parameters) rotator							ThrowRotation;
 var(parameters) bool							ThrowRotationOverridden;
 var(parameters) bool							bWaitToThrowGrenade;
+var(parameters) bool 							bInitialPosOverridden;
 var(parameters) IInterestedGrenadeThrowing		ThrowClient;
 
 const kBreachThrowGrenadeGoalPriority = 86;	// barely higher than the attack enemy or engage for compliance goals
@@ -36,10 +38,19 @@ const kBreachThrowGrenadeGoalPriority = 86;	// barely higher than the attack ene
 overloaded function construct( AI_Resource r, int pri)	{ assert(false); }
 
 // use this one
-overloaded function construct( AI_Resource r, vector inTargetLocation, vector inThrowFromLocation, EquipmentSlot inGrenadeSlot, optional bool bIsBreachingThrow)
+overloaded function construct( AI_Resource r, vector inTargetLocation, vector inThrowFromLocation, EquipmentSlot inGrenadeSlot, optional bool bIsBreachingThrow, optional vector BreachPoint)
 {
 	if (bIsBreachingThrow)
+	{
 		Priority = kBreachThrowGrenadeGoalPriority;
+		InitialPosition = BreachPoint;
+		bInitialPosOverridden = true;
+	}
+	else
+	{
+		InitialPosition = ThrowFromLocation;
+		bInitialPosOverridden = false;
+	}
 
 	super.construct( r, priority );
 

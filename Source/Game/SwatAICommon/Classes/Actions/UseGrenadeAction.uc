@@ -20,8 +20,10 @@ var private bool								bContinueToThrowGrenade;
 
 // copied from our goal
 var(parameters) vector							vTargetLocation;
+var(parameters) vector							InitialPosition;
 var(parameters) EquipmentSlot					GrenadeSlot;
 var(parameters) bool							bWaitToThrowGrenade;
+var(parameters) bool							bInitialPosOverridden;
 var(parameters) IInterestedGrenadeThrowing		ThrowClient;
 
 // config
@@ -120,7 +122,7 @@ private function PrepareToThrowGrenade()
 	ThrowAngle = ISwatAI(m_Pawn).GetThrowAngle() * RADIANS_TO_TWOBYTE;
 
 	ThrowSpeed = GetThrowSpeed(ThrowAngle, InitialLocation);
-	GrenadeWeapon.SetThrowSpeed(ThrowSpeed);
+	GrenadeWeapon.SetThrowSpeed(ThrowSpeed, bInitialPosOverridden, InitialPosition);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

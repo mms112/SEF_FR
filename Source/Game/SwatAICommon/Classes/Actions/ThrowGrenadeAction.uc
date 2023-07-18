@@ -17,11 +17,13 @@ import enum AIThrowSide from ISwatAI;
 // copied to our action
 var(parameters) vector							TargetLocation;
 var(parameters) vector							ThrowFromLocation;
+var(parameters) vector							InitialPosition;
 var(parameters) EquipmentSlot					GrenadeSlot;
 var(parameters) AIThrowSide						ThrowSide;
 var(parameters) rotator							ThrowRotation;
 var(parameters) bool							ThrowRotationOverridden;
 var(parameters) bool							bWaitToThrowGrenade;
+var(parameters) bool 							bInitialPosOverridden;
 var(parameters) IInterestedGrenadeThrowing		ThrowClient;
 
 // our behaviors
@@ -140,7 +142,7 @@ function ThrowGrenade()
 	// let the pawn know our throw side before we start the use grenade behavior
 	ISwatAI(m_Pawn).SetThrowSide(ThrowSide);
 
-	CurrentUseGrenadeGoal = new class'UseGrenadeGoal'(weaponResource(), GrenadeSlot, TargetLocation);
+	CurrentUseGrenadeGoal = new class'UseGrenadeGoal'(weaponResource(), GrenadeSlot, TargetLocation, bInitialPosOverridden, InitialPosition);
 	assert(CurrentUseGrenadeGoal != None);
 	CurrentUseGrenadeGoal.AddRef();
 
