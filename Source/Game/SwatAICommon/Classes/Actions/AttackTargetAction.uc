@@ -372,9 +372,12 @@ protected latent function AimAndFireAtTarget(FiredWeapon CurrentWeapon)
 		Sleep(WaitTimeBeforeFiring);*/
 	
 	// suspects don't care if they need to acquire a target perfectly
-	if(m_Pawn.IsA('SwatEnemy') && (ShotsFired == 0) && !bSuppressiveFire && Target.IsA('SwatOfficer'))
+	if(m_Pawn.IsA('SwatEnemy') && (ShotsFired == 0) && !bSuppressiveFire)
 	{
-		LatentAimAtActor(Target, ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring());
+		if (Target.IsA('SwatOfficer'))
+			LatentAimAtActor(Target, ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring());
+		else
+			LatentAimAtActor(Target, ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring()/2);
 	}
 	else if (!bSuppressiveFire)
 	{	// SWAT need perfect aim!
@@ -412,7 +415,7 @@ protected latent function ShootInAimDirection(FiredWeapon CurrentWeapon)
 	/*if (WaitTimeBeforeFiring > 0)
 		Sleep(WaitTimeBeforeFiring);*/
 		
-	if ((ShotsFired == 0) && !bSuppressiveFire && Target.IsA('SwatOfficer'))
+	/*if ((ShotsFired == 0) && !bSuppressiveFire && Target.IsA('SwatOfficer'))
 	{
 		LatentAimAtActor(Target, ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring());
 	}
@@ -423,7 +426,7 @@ protected latent function ShootInAimDirection(FiredWeapon CurrentWeapon)
 	else
 	{
 		//Do nothing, just fire...
-	}
+	}*/
 		
 	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
 	/*TimeElapsed = Level.TimeSeconds - StartActionTime;
