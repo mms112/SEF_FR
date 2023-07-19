@@ -174,8 +174,16 @@ protected function SetBreacher(optional bool skipBreacher)
 			break;
 	}
 
-	if(Breacher == None) {
-		instantFail(ACT_INSUFFICIENT_RESOURCES_AVAILABLE);
+	if(Breacher == None)
+	{
+		if (skipBreacher)
+		{
+			SetBreacher();
+		}
+		else
+		{
+			instantFail(ACT_INSUFFICIENT_RESOURCES_AVAILABLE);
+		}
 	}
 
 }
@@ -437,7 +445,7 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 
 		Officer = OfficersInStackupOrder[i];
 
-		if (class'Pawn'.static.checkConscious(Officer))
+		if (class'Pawn'.static.checkConscious(Officer) && (Officer != Breacher))
 		{
 			
 			if (Officer.HasActiveshield()) //skip shield guys for now...
@@ -461,7 +469,7 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 	// now try the first officer
 	Officer = OfficersInStackupOrder[0];
 
-	if (class'Pawn'.static.checkConscious(Officer) && !Officer.HasActiveshield())
+	if (class'Pawn'.static.checkConscious(Officer) && !Officer.HasActiveshield() && (Officer != Breacher))
 	{
 		if (ISwatOfficer(Officer).GetThrownWeapon(ThrownItemSlot) != None)
 		{
@@ -472,7 +480,7 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 
 	if (class'Pawn'.static.checkConscious(Breacher))
 	{
-		if (ISwatOfficer(Officer).GetThrownWeapon(ThrownItemSlot) != None)
+		if (ISwatOfficer(Breacher).GetThrownWeapon(ThrownItemSlot) != None)
 		{
 			//well shit, gotta find a new breacher
 			SetBreacher(true);
@@ -483,7 +491,7 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 
 				Officer = OfficersInStackupOrder[i];
 
-				if (class'Pawn'.static.checkConscious(Officer) && (Officer != Breacher))
+				if (class'Pawn'.static.checkConscious(Officer))
 				{
 					if (ISwatOfficer(Officer).GetThrownWeapon(ThrownItemSlot) != None)
 					{
@@ -499,7 +507,7 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 		}
 	}
 
-log("get throwing officer None");
+	log("get throwing officer None");
 	// didn't find an alive officer with the thrown weapon available
 	return None;
 }
