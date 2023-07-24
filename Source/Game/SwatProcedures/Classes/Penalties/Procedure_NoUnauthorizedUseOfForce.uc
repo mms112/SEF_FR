@@ -27,7 +27,8 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
             $" removed "$Pawn.name
             $" from its list of IncapacitatedEnemies because PawnDied.");
 
-    Remove( Pawn, IncapacitatedEnemies );
+	if (Killer != None)
+		Remove( Pawn, IncapacitatedEnemies );
 }
 
 //interface IInterested_GameEvent_PawnIncapacitated implementation
