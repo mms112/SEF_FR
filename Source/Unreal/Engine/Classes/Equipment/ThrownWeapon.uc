@@ -248,6 +248,12 @@ simulated function name GetThirdPersonThrowAnimation()
         return ICanThrowWeapons(Pawn(Owner)).GetThrowAnimation(ThrowSpeed);
 }
 
+simulated function bool ShouldAlwaysShowCrosshair()
+{
+	//Don't hide crosshair when using throwables
+	return true;
+}
+
 defaultproperties
 {
     UnavailableAfterUsed=true

@@ -251,9 +251,12 @@ function bool GetViewmodelDisabled()
 
 function bool GetCrosshairDisabled()
 {
-  local SwatGuiConfig GC;
+	local SwatGuiConfig GC;
 
-  GC = SwatRepo(Level.GetRepo()).GuiConfig;
+	GC = SwatRepo(Level.GetRepo()).GuiConfig;
+
+	if (Pawn.GetActiveItem().ShouldAlwaysShowCrosshair())
+		return false;
 
 	return GC.ExtraIntOptions[2] == 1 || ShouldHideCrosshairsDueToIronsights();
 }

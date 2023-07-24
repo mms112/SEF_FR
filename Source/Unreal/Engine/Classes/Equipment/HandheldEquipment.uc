@@ -1428,6 +1428,11 @@ simulated function bool ShouldHideCrosshairsInIronsights()
   return false; // Only weapons do
 }
 
+simulated function bool ShouldAlwaysShowCrosshair()
+{
+  return false; // Only grenades do
+}
+
 simulated function bool ShouldWalkInIronsights()
 {
     return false; // Only weapons do
